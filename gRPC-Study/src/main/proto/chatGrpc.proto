@@ -1,0 +1,23 @@
+syntax = 'proto3';
+
+
+package grpc.chat;
+
+
+
+service ChatService {
+  rpc ChatStream ( stream ChatRequest) returns  (stream ChatMessage) {};
+  rpc SendMessage(ChatMessage) returns (Empty) {};
+}
+
+message ChatRequest {
+  string username = 1;
+  string targetUser = 2;
+}
+
+message ChatMessage {
+  string username = 1;
+  string targetUser = 2;
+  string message = 3;
+}
+message Empty{}

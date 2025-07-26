@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef" exporter="Flowable Open Source Modeler" exporterVersion="6.8.1">
+  <signal id="alertSignal" name="alert"/>
+  <message id="payment" name="payment"/>
+  <message id="newInvoice" name="newInvoice"/>
+  <process id="myWorkStream-4">
+    <!--     信号事件-->
+    <intermediateCatchEvent id="sid-49ce4787-eb3a-4bf0-a37b-fbbda929322a" name="OnAlert">
+      <signalEventDefinition signalRef="alertSignal"/>
+    </intermediateCatchEvent>
+    <intermediateThrowEvent id="sid-dfd56ce0-5be1-4933-bb61-deda112e1481" name="Alert">
+      <signalEventDefinition signalRef="alertSignal"/>
+    </intermediateThrowEvent>
+    <!--    消息事件 -->
+    <intermediateCatchEvent id="paymentEvt">
+      <messageEventDefinition messageRef="payment"/>
+    </intermediateCatchEvent>
+    <startEvent id="messageStart">
+      <messageEventDefinition messageRef="newInvoice"/>
+    </startEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_myWorkStream-4">
+    <bpmndi:BPMNPlane bpmnElement="myWorkStream-4" id="BPMNPlane_myWorkStream-4">
+      <bpmndi:BPMNShape id="shape-f76da461-0cb1-4332-8e32-43fafcc19ab9" bpmnElement="sid-49ce4787-eb3a-4bf0-a37b-fbbda929322a">
+        <omgdc:Bounds x="-90.0" y="90.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-6fb130ab-e8ed-4141-9813-53092516485b" bpmnElement="sid-dfd56ce0-5be1-4933-bb61-deda112e1481">
+        <omgdc:Bounds x="-140.0" y="90.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-e072bfb3-fa25-4643-a28c-3c9276f792ee" bpmnElement="messageStart">
+        <omgdc:Bounds x="-90.0" y="140.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-da725aa9-c398-467f-8ca6-884db6e8aa1b" bpmnElement="paymentEvt">
+        <omgdc:Bounds x="-90.0" y="185.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

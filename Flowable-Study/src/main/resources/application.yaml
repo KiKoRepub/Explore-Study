@@ -1,0 +1,47 @@
+server:
+  port: 8888
+
+flowable:
+#  idm:
+#    enabled: true
+#    app:
+#      admin:
+#        user-id: admin
+#        password: 123456
+#        first-name: Alonet
+  async-executor-activate: true
+  database-schema-update: true
+#  check-process-definitions: false
+  idm:
+    enabled: true
+  history-level: full
+logging:
+  level:
+    org.flowable: debug
+#  database-type: mysql
+
+spring:
+  application:
+    name: flowable-study
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:flowable;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 123456
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/flowable?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+#    username: root
+#    password: 123456
+
+#  jpa:
+##    hibernate:
+##      ddl-auto: update
+##    show-sql: true
+#    open-in-view: true
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+threadPool:
+  alive:
+    second: 30
+  queue:
+    capacity: 6

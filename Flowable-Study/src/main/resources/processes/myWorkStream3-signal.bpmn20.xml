@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef" exporter="Flowable Open Source Modeler" exporterVersion="6.8.1">
+
+  <signal id="alertSignal" name="alertSignal" flowable:scope="global"/>
+  <process id="myWorkStream-3-signal">
+    <startEvent id="sid-995eca4f-5ab2-4aab-94b3-7ab2ec6bb08b">
+      <signalEventDefinition signalRef="alertSignal"/>
+    </startEvent>
+    <serviceTask id="sid-630051ed-6a35-4873-8c73-c4b63ee6909c" flowable:exclusive="true" name="输出信息" flowable:class="my.flowable.delegete.PrintTestDelegate"/>
+    <endEvent id="sid-3d4f9fb2-2d9d-4579-8206-5aaa9630e41a"/>
+    <sequenceFlow id="sid-3216b28a-47f2-48ff-8694-39797d552f22" sourceRef="sid-995eca4f-5ab2-4aab-94b3-7ab2ec6bb08b" targetRef="sid-630051ed-6a35-4873-8c73-c4b63ee6909c"/>
+    <sequenceFlow id="sid-4d7b869a-de75-4953-815b-c349e5e63c32" sourceRef="sid-630051ed-6a35-4873-8c73-c4b63ee6909c" targetRef="sid-3d4f9fb2-2d9d-4579-8206-5aaa9630e41a"/>
+  </process>
+
+
+
+
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_myWorkStream-3-signal">
+    <bpmndi:BPMNPlane id="BPMNPlane_myWorkStream-3-signal" bpmnElement="myWorkStream-3-signal">
+      <bpmndi:BPMNShape id="shape-3960ac8a-5c21-4b26-be77-02004a835f37" bpmnElement="sid-995eca4f-5ab2-4aab-94b3-7ab2ec6bb08b">
+        <omgdc:Bounds x="-135.0" y="0.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-ff611ad5-a933-4fe7-9452-401ce63302f0" bpmnElement="sid-630051ed-6a35-4873-8c73-c4b63ee6909c">
+        <omgdc:Bounds x="-55.0" y="-20.0" width="100.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-f64311d1-bb6c-4c0f-a9cb-8823a86e7bcd" bpmnElement="sid-3d4f9fb2-2d9d-4579-8206-5aaa9630e41a">
+        <omgdc:Bounds x="100.0" y="5.5" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-3e936086-023a-43c5-83c1-b855081bd8e8" bpmnElement="sid-3216b28a-47f2-48ff-8694-39797d552f22">
+        <omgdi:waypoint x="-105.0" y="7.5"/>
+        <omgdi:waypoint x="-55.0" y="0.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge-26c8a8b0-c73a-427d-961e-1b0624ddd21e" bpmnElement="sid-4d7b869a-de75-4953-815b-c349e5e63c32">
+        <omgdi:waypoint x="45.0" y="20.0"/>
+        <omgdi:waypoint x="100.0" y="20.5"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

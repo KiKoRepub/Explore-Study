@@ -1,0 +1,16 @@
+server:
+  port: 7777
+spring:
+  ai:
+    dashscope:
+      chat:
+        api-key: sk-f020a04edc284e28b1c8ff8e9610ff08
+#        api-key: ${DASHSCOPE_API_KEY}
+        options:
+          model: deepseek-v1
+          temperature: 0.6 # 模型温度，数值越大 结果越随机
+        base-url:
+      api-key: sk-f020a04edc284e28b1c8ff8e9610ff08
+      audio:
+        transcription:
+          base-url: https://api.deepseek.com/v1/audio/transcriptions
