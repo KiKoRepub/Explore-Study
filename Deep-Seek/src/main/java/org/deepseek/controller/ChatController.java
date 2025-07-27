@@ -5,7 +5,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.deepseek.tools.GetWeatherTool;
+import org.deepseek.utils.PromptUtils;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -39,6 +42,13 @@ public class ChatController extends AIController {
 
         ChatResponse response = chatClient.prompt(message)
                 .call().chatResponse();
+//        ChatClient.ChatClientRequestSpec request = chatClient
+//                .prompt(PromptUtils.getCodeAssistantPrompt())
+//                .user(message)
+//                .tools(new GetWeatherTool());
+//
+//        System.out.println(request);
+
 
         return response.getResult().getOutput().getText();
     }
@@ -89,7 +99,6 @@ public class ChatController extends AIController {
 
         return "";
     }
-
 
 
 

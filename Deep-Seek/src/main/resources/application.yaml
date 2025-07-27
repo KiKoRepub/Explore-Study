@@ -11,6 +11,14 @@ spring:
       chat:
         options:
           model: deepseek-chat
+      audio:
+        speech:
+          api-key: ${SILICONFLOW_API_KEY}
+          base-url: https://api.siliconflow.cn
+          options:
+#            voice: anna
+            model: FunAudioLLM/CosyVoice2-0.5B
+      #      base-url:  https://api.siliconflow.cn/v1
       base-url: https://api.deepseek.com
       embedding:
 #        enabled: true
@@ -20,19 +28,21 @@ spring:
           dimensions: 1024
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
-#    mcp:
-#      client:
-#        toolcallback:
-#          enabled: true
-#        name: mcp-client
-#        sse:
-#          connections:
-#            server1:
-#              url: http://localhost:8085/mcp/book
-#        stdio:
-#          servers-configuration: classpath:/book-stdio-server.json
-#        enabled: true
-#        type: sync
+    mcp:
+      client:
+        toolcallback:
+          enabled: true
+        name: mcp-client
+        sse:
+          connections:
+            server1:
+              url: http://localhost:8085
+#            server2:
+#              url: http://localhost:8086
+        stdio:
+          servers-configuration: classpath:/book-stdio-server.json
+        enabled: true
+        type: sync
     vectorstore:
       pgvector:
         index-type: HNSW

@@ -19,6 +19,14 @@
 
     <dependencies>
 
+
+<!--        <dependency>-->
+<!--            <groupId>com.github.goxr3plus</groupId>-->
+<!--            <artifactId>java-stream-player</artifactId>-->
+<!--            <version>9.0.4</version>-->
+<!--        </dependency>-->
+
+
 <!--        <dependency>-->
 <!--            <groupId>com.squareup.okio</groupId>-->
 <!--            <artifactId>okio</artifactId>-->
@@ -114,6 +122,12 @@
     </build>
 
     <repositories>
+<!--       java-stream-player -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
         <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
