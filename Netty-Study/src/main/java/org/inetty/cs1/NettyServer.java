@@ -1,4 +1,4 @@
-package org.inetty;
+package org.inetty.cs1;
 
 import lombok.extern.slf4j.Slf4j;
 import org.inetty.utils.BufferStringUtils;
@@ -136,6 +136,9 @@ public class NettyServer {
                         keyEvent.cancel();
                     }else {
                         // 执行 打印
+                        List<String> list = BufferStringUtils.bufferStringSplit(buffer,'+');
+
+                        list.forEach(System.out::println);
 
                         if(buffer.position() == buffer.limit()){
                             // buffer 满了
@@ -145,14 +148,9 @@ public class NettyServer {
 
                           biggerBuffer.put(buffer); // 接收了原本的16字节
                           keyEvent.attach(biggerBuffer); // 将 buffer 重新设置成 32字节
-                            continue;
                         }
 
-                        List<String> list = BufferStringUtils.bufferStringSplit(buffer,'+');
 
-
-
-                        list.forEach(System.out::println);
 
                         buffer.clear();
                     }

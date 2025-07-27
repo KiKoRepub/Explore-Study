@@ -1,4 +1,4 @@
-package org.inetty;
+package org.inetty.cs1;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,7 +15,7 @@ public class NettyClient {
 //        Thread.sleep(1000);
         System.out.println("waiting !!!");
 
-        client.write(Charset.defaultCharset().encode("hello+world+"));
+//        client.write(Charset.defaultCharset().encode("hello+world+"));
 
         Scanner sc = new Scanner(System.in);
 
