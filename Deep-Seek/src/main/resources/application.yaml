@@ -6,11 +6,28 @@ spring:
   main:
     allow-bean-definition-overriding: true
   ai:
+    model:
+      image: zhipuai # 设置 图像处理的 AI 为 智谱 AI
+      chat: openai # 设置 聊天 AI 为 OpenAI
+      embedding: openai # 设置 向量生成 AI 为 OpenAI
+    zhipuai:
+#      api-key: ${ZHUPUAI_API_KEY}
+#      base-url: open.bigmodel.cn/api/paas
+      image:
+        api-key: ${ZHIPUAI_IMAGE_API_KEY}
+        base-url:  https://open.bigmodel.cn/api/paas
+        options:
+            model: cogview-4-250304
     openai:
       api-key: ${DEEPSEEK_API_KEY}
       chat:
         options:
           model: deepseek-chat
+#      image:
+#        api-key: ${DASHCODE_IMAGE_API_KEY}
+#        base-url:  https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis
+#        options:
+#          model: wanx2.1-t2i-turbo
       audio:
         speech:
           api-key: ${SILICONFLOW_API_KEY}
@@ -28,8 +45,10 @@ spring:
           dimensions: 1024
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
+
     mcp:
       client:
+
         toolcallback:
           enabled: true
         name: mcp-client
@@ -37,18 +56,21 @@ spring:
           connections:
             server1:
               url: http://localhost:8085
-#            server2:
-#              url: http://localhost:8086
-        stdio:
-          servers-configuration: classpath:/book-stdio-server.json
+#              sse-endpoint: /mcp/book
+            server2:
+              url: https://mcp.amap.com
+              sse-endpoint: /sse?key=${AMAP_API_KEY}
         enabled: true
-        type: sync
+        type: async
+        request-timeout: 60000
     vectorstore:
       pgvector:
         index-type: HNSW
         distance-type: COSINE_DISTANCE
         dimensions: 1024
         max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+    retry:
+      max-attempts: 10 # 最大尝试次数
   datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:postgresql://localhost:5432/vector
@@ -62,3 +84,6 @@ spring:
 #          temperature: 0.6 # 模型温度，数值越大 结果越随机
 #        base-url: https://api.deepseek.com
 #      api-key: ${DASHSCOPE_API_KEY}
+amap:
+  api-key: ${AMAP_API_KEY}
+  base-url: https://mcp.amap.com

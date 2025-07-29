@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "amap-amap-sse": {
+      "url": "https://mcp.amap.com/sse?key=您在高德官网上申请的key"
+    }
+  },
+  "tips": "这个文件不能正常使用，只是作为参考",
+  "tips2": "可以在 properties文件 中 以下列格式进行编写，然后就可以正常连接了",
+
+  "url": "sse.connections.<server名字>.url = https://mcp.amap.com ",
+  "sse-endpoint": "sse.connections.<server名字>.sse-endpoint = /sse?key=您在高德官网上申请的key"
+}

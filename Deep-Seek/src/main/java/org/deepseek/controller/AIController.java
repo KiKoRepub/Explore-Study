@@ -3,6 +3,7 @@ package org.deepseek.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class AIController {
     protected static final String DEFAULT_PROMPT = "你是谁 ?";
     @Autowired
     protected ChatClient chatClient;
+
+    @Autowired
+    ImageModel imageModel;
 
     protected  ChatModel deepSeekChatModel;
 

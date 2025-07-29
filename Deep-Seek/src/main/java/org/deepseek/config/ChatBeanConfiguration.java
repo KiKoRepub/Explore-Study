@@ -9,6 +9,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,11 +22,12 @@ public class ChatBeanConfiguration {
     public ChatMemory chatMemory() {
         return MessageWindowChatMemory.builder().build();// 开启内存 信息存储功能
     }
+
+
     @Bean
-    public ChatClient chatClient(ChatModel model,ToolCallbackProvider toolProvider) {
+    public ChatClient chatClient(ChatModel model) {
         System.out.println("model = " + model);
         return ChatClient.builder(model)
-//                .defaultToolCallbacks(toolProvider) // to use MCP
                 .build();
     }
 
