@@ -1,6 +1,7 @@
 package org.deepseek.controller;
 
 
+import ai.z.openapi.ZhipuAiClient;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.image.ImageModel;
@@ -17,11 +18,7 @@ public class AIController {
     @Autowired
     protected ChatClient chatClient;
 
-    @Autowired
-    ImageModel imageModel;
-
     protected  ChatModel deepSeekChatModel;
-
 
     public AIController( OpenAiChatModel openAiChatModel) {
         this.deepSeekChatModel = openAiChatModel;

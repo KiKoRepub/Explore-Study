@@ -11,8 +11,6 @@ spring:
       chat: openai # 设置 聊天 AI 为 OpenAI
       embedding: openai # 设置 向量生成 AI 为 OpenAI
     zhipuai:
-#      api-key: ${ZHUPUAI_API_KEY}
-#      base-url: open.bigmodel.cn/api/paas
       image:
         api-key: ${ZHIPUAI_IMAGE_API_KEY}
         base-url:  https://open.bigmodel.cn/api/paas
@@ -84,6 +82,18 @@ spring:
 #          temperature: 0.6 # 模型温度，数值越大 结果越随机
 #        base-url: https://api.deepseek.com
 #      api-key: ${DASHSCOPE_API_KEY}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
 amap:
   api-key: ${AMAP_API_KEY}
   base-url: https://mcp.amap.com
+extra:
+  zhipu-image:
+    resolve: GLM-4.1V-Thinking-Flash
+  zhipu-chat:
+    unknow: GLM-4.5-Flash
+  zhipu-completion:
+    api-key: ${ZHIPUAI_COMPLETION_API_KEY}

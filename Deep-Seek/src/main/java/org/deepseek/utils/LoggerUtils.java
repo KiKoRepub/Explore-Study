@@ -1,5 +1,6 @@
 package org.deepseek.utils;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LoggerUtils {
@@ -11,16 +12,15 @@ public class LoggerUtils {
     public static void info(String message){
         log.info(message);
     }
+    public static void info(String message,Object ... args){
+        log.info(String.format(message,args));
+    }
 
     public static void error(Throwable e){
         error("",e);
     }
     public static void error(String message, Throwable e){
-        log.log(null, message, e);
-    }
-
-    public static void info(String message,Object ... args){
-        log.info(String.format(message,args));
+        log.log(Level.OFF,message, e);
     }
 
 
