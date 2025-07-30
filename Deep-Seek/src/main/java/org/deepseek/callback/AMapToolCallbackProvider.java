@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-@Component("aMapToolCallbackProvider")
+
 public class AMapToolCallbackProvider implements ToolCallbackProvider {
-    @Autowired
-    @Qualifier("aMapTools")
-    private ToolCallback[] toolCallbacks;
+
+    private final ToolCallback[] toolCallbacks;
 
     @NotNull
     @Override
@@ -19,5 +18,7 @@ public class AMapToolCallbackProvider implements ToolCallbackProvider {
         return this.toolCallbacks;
     }
 
-
+    public AMapToolCallbackProvider(ToolCallback[] toolCallbacks){
+        this.toolCallbacks = toolCallbacks;
+    }
 }

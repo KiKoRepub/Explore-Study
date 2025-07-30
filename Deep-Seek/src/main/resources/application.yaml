@@ -21,11 +21,6 @@ spring:
       chat:
         options:
           model: deepseek-chat
-#      image:
-#        api-key: ${DASHCODE_IMAGE_API_KEY}
-#        base-url:  https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis
-#        options:
-#          model: wanx2.1-t2i-turbo
       audio:
         speech:
           api-key: ${SILICONFLOW_API_KEY}
@@ -43,21 +38,19 @@ spring:
           dimensions: 1024
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
-
     mcp:
       client:
-
-        toolcallback:
-          enabled: true
+#        toolcallback:
+#          enabled: true
         name: mcp-client
         sse:
           connections:
             server1:
               url: http://localhost:8085
 #              sse-endpoint: /mcp/book
-            server2:
-              url: https://mcp.amap.com
-              sse-endpoint: /sse?key=${AMAP_API_KEY}
+#            server2:
+#              url: https://mcp.amap.com
+#              sse-endpoint: /sse?key=${AMAP_API_KEY}
         enabled: true
         type: async
         request-timeout: 60000
@@ -70,18 +63,9 @@ spring:
     retry:
       max-attempts: 10 # 最大尝试次数
   datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:postgresql://localhost:5432/vector
     username: postgres
     password: 123456
-#    dashscope:
-#      chat:
-#        api-key: ${DASHSCOPE_API_KEY}
-#        options:
-#          model: deepseek-chat
-#          temperature: 0.6 # 模型温度，数值越大 结果越随机
-#        base-url: https://api.deepseek.com
-#      api-key: ${DASHSCOPE_API_KEY}
   servlet:
     multipart:
       enabled: true
@@ -90,6 +74,7 @@ spring:
 amap:
   api-key: ${AMAP_API_KEY}
   base-url: https://mcp.amap.com
+
 extra:
   zhipu-image:
     resolve: GLM-4.1V-Thinking-Flash
@@ -97,3 +82,6 @@ extra:
     unknow: GLM-4.5-Flash
   zhipu-completion:
     api-key: ${ZHIPUAI_COMPLETION_API_KEY}
+cloudbed:
+  url: https://pngcdn.cn/api/v1
+  token: ${IMAGE_OSS_TOKEN}

@@ -36,9 +36,6 @@ public class AudioController extends AIController{
         byte[] audioBytes = response.getResult().getOutput();
     }
 
-    private void playAudio(byte[] audioBytes){
-
-    }
 
     public static void main(String[] args) {
         String audioPath = "audio/audio.wav";

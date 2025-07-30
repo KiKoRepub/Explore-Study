@@ -9,7 +9,6 @@ public record BookRentInfo(
         int stock,
         String rentPrice,
         String canRentTime
-
 ) {
 
 

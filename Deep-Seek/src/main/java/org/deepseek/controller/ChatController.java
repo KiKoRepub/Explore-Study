@@ -1,5 +1,6 @@
 package org.deepseek.controller;
 
+import ai.z.openapi.service.model.ChatMessage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
@@ -9,6 +10,8 @@ import org.deepseek.tools.GetWeatherTool;
 import org.deepseek.utils.PromptUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientRequest;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -30,8 +33,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/chat")
 public class ChatController extends AIController {
+
     @Autowired
-    protected ChatClient chatClient;
+    ChatMemoryRepository memoryRepository;
 
     public ChatController(OpenAiChatModel openAiChatModel) {
         super(openAiChatModel);
@@ -54,7 +58,7 @@ public class ChatController extends AIController {
     }
 
     @GetMapping("/stream")
-    public Flux<Object> streamChat (HttpServletResponse response) throws IOException {
+    public Flux<Object> streamChat(HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         String message = DEFAULT_PROMPT;
         ObjectMapper mapper = new ObjectMapper();
@@ -67,12 +71,12 @@ public class ChatController extends AIController {
             }
             List responses = mapper.readValue(reader, List.class);
             List<ChatResponse> chatResponses = new ArrayList<>();
-            for (Object res : responses){
-                try{
+            for (Object res : responses) {
+                try {
                     ChatResponse chatResponse = JSON.parseObject(res.toString(), ChatResponse.class);
                     chatResponses.add(chatResponse);
-                }catch (Exception e){
-                    if (res instanceof ChatResponse chatResponse){
+                } catch (Exception e) {
+                    if (res instanceof ChatResponse chatResponse) {
                         chatResponses.add(chatResponse);
                     }
                 }
@@ -91,15 +95,24 @@ public class ChatController extends AIController {
 
     @GetMapping("/multi-push")
     public String deepPush(@RequestParam("message_list") List<String> messageList) {
-        for (String message : messageList) {
-            ChatResponse response = chatClient.prompt(message).call().chatResponse();
+        ChatResponse request = chatClient.prompt()
+                .messages(
+                        messageList.stream()
+                                .map(message -> UserMessage.builder()
+                                        .text(message)
+                                        .build())
+                                .toArray(UserMessage[]::new)
+                ).call()
+                .chatResponse();
 
-        }
+        return request.getResult().getOutput().getText();
 
-
-        return "";
     }
 
 
+    @PostMapping("/memory-push")
+    public String memoryPush(@RequestParam("message") String message) {
 
+        return "";
+    }
 }
