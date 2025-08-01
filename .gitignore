@@ -6,6 +6,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 *.env
+gaming.txt
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

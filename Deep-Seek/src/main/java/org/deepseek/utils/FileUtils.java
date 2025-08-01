@@ -1,8 +1,10 @@
 package org.deepseek.utils;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.deepseek.entity.ResourceType;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +17,8 @@ public class FileUtils {
     private static final String RESOURCES_PATH = "D:\\university\\JAVA\\Explore-Study\\Deep-Seek\\src\\main\\resources";
 
     private static final String IMG_PATH = RESOURCES_PATH + "/images";
+    private static final String VIDEO_PATH = RESOURCES_PATH + "/videos";
+    private static final String AUDIO_PATH = RESOURCES_PATH + "/audios";
 
     public static File saveRequestImageFile(MultipartFile file) {
         File saveDir = new File(IMG_PATH);
@@ -46,10 +50,14 @@ public class FileUtils {
 
     }
 
-    public static boolean downloadFromURL(String fileUrl, String fileName) {
+    public static boolean downloadFromURL(String fileUrl, String fileName, ResourceType type) {
         // 构建 保存后的文件路径
         String suffix = fileUrl.substring(fileUrl.lastIndexOf("."));
-        String saving = IMG_PATH + "\\" + fileName + suffix;
+        String saving = "";
+        if (type == ResourceType.IMAGE)
+             saving = IMG_PATH + "\\" + fileName + suffix;
+        if (type == ResourceType.VIDEO)
+             saving = VIDEO_PATH + "\\" + fileName + suffix;
 
 
         try (FileOutputStream out = new FileOutputStream(saving)) {
@@ -70,6 +78,13 @@ public class FileUtils {
             LoggerUtils.error(e);
             return false;
         }
+    }
+
+
+    public static void main(String[] args) {
+//        String url = "https://aigc-files.bigmodel.cn/api/cogvideo/090ca92e-6eb2-11f0-af25-fe252d325a87_0.mp4";
+        String url = "https://aigc-files.bigmodel.cn/api/cogvideo/6954cc8a-6ec6-11f0-b4d3-fecd4373136c_0.mp4";
+        downloadFromURL(url,"video2",ResourceType.VIDEO);
     }
 
 }

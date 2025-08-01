@@ -10,6 +10,9 @@ spring:
       image: zhipuai # 设置 图像处理的 AI 为 智谱 AI
       chat: openai # 设置 聊天 AI 为 OpenAI
       embedding: openai # 设置 向量生成 AI 为 OpenAI
+      audio:
+        speech: openai # 设置 语音合成 AI 为 OpenAI
+        transcription: openai # 设置 语音识别 AI 为 OpenAI
     zhipuai:
       image:
         api-key: ${ZHIPUAI_IMAGE_API_KEY}
@@ -21,6 +24,7 @@ spring:
       chat:
         options:
           model: deepseek-chat
+        base-url: https://api.deepseek.com
       audio:
         speech:
           api-key: ${SILICONFLOW_API_KEY}
@@ -29,7 +33,6 @@ spring:
 #            voice: anna
             model: FunAudioLLM/CosyVoice2-0.5B
       #      base-url:  https://api.siliconflow.cn/v1
-      base-url: https://api.deepseek.com
       embedding:
 #        enabled: true
         options:
@@ -80,6 +83,9 @@ extra:
     resolve: GLM-4.1V-Thinking-Flash
   zhipu-chat:
     unknow: GLM-4.5-Flash
+  zhipu-video:
+    api-key: ${ZHIPUAI_VIDEO_API_KEY}
+    model: CogVideoX-Flash
   zhipu-completion:
     api-key: ${ZHIPUAI_COMPLETION_API_KEY}
 cloudbed:

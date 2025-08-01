@@ -3,6 +3,7 @@ package org.deepseek.service.impl;
 import ai.z.openapi.ZhipuAiClient;
 import ai.z.openapi.service.model.*;
 import okhttp3.*;
+import org.deepseek.entity.ResourceType;
 import org.deepseek.service.CloudBedService;
 import org.deepseek.service.ImageService;
 import org.deepseek.utils.FileUtils;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -53,7 +55,7 @@ public class ImageServiceImpl implements ImageService {
         boolean res = true;
         for (String url : urls) {
             System.out.println(url);
-            res &= FileUtils.downloadFromURL(url, "test" + Math.random() * 10);
+            res &= FileUtils.downloadFromURL(url, "test" + Math.random() * 10, ResourceType.IMAGE);
         }
         return res;
     }
@@ -91,7 +93,7 @@ public class ImageServiceImpl implements ImageService {
 
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .model(imageResolveModelName)
-                .messages(Arrays.asList(
+                .messages(Collections.singletonList(
                         ChatMessage.builder()
                                 .role(ChatMessageRole.USER.value())
                                 .content(Arrays.asList(

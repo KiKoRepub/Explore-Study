@@ -3,7 +3,9 @@ package org.deepseek.config;
 import ai.z.openapi.ZhipuAiClient;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,14 +31,18 @@ public class ChatBeanConfiguration {
 
     @Bean
     public ChatMemory chatMemory() {
-        return MessageWindowChatMemory.builder().build();// 开启内存 信息存储功能
+        return MessageWindowChatMemory.builder()
+                .chatMemoryRepository(new InMemoryChatMemoryRepository())
+                .maxMessages(20) // 最大消息数
+                .build();// 开启内存 信息存储功能
     }
 
 
     @Bean
-    public ChatClient chatClient(ChatModel model) {
+    public ChatClient chatClient(ChatModel model,ChatMemory memory) {
         System.out.println("model = " + model);
         return ChatClient.builder(model)
+//                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build()) // open memory function
                 .build();
     }
 
@@ -47,8 +53,7 @@ public class ChatBeanConfiguration {
                 .build();
     }
 
-    @Bean
-    public WebClient.Builder webClient() {
-        return WebClient.builder();
-    }
+
+
+
 }

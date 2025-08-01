@@ -38,7 +38,7 @@ public class AudioController extends AIController{
 
 
     public static void main(String[] args) {
-        String audioPath = "audio/audio.wav";
+        String audioPath = "audios/audio.wav";
         InputStream resourceAsStream = AudioController.class.getClassLoader().getResourceAsStream(audioPath);
 
         playAudio(resourceAsStream);
