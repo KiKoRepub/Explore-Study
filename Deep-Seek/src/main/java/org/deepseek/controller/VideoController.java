@@ -6,6 +6,7 @@ import org.deepseek.service.VideoService;
 import org.deepseek.utils.FileUtils;
 import org.deepseek.utils.LoggerUtils;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +27,6 @@ public class VideoController extends AIController {
     private  VideoService videoService;
 
 
-    public VideoController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
 
     @PostMapping("/generate")

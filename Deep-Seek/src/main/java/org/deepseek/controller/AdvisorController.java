@@ -53,9 +53,6 @@ public class AdvisorController extends AIController {
 
     private static final String DEFAULT_FORBID_ERROR = "问题违规了哦，不能回答，换个话题试试吧";
 
-    public AdvisorController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @PostMapping("/")
     @NotNull

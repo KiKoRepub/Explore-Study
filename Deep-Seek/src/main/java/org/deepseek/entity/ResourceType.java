@@ -4,6 +4,7 @@ public enum ResourceType {
 
     IMAGE,
     VIDEO,
-    OTHER
+    AUDIO,
+
 
 }

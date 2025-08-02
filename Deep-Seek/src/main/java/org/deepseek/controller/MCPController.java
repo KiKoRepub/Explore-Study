@@ -5,6 +5,7 @@ import io.modelcontextprotocol.spec.McpSchema;
 import org.deepseek.callback.AMapToolCallbackProvider;
 import org.deepseek.entity.BookRentInfo;
 import org.deepseek.utils.LoggerUtils;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.mcp.client.autoconfigure.NamedClientMcpTransport;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -31,9 +32,6 @@ public class MCPController extends AIController{
 
 
 
-    public MCPController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @GetMapping("/push")
     public String push(@RequestParam("message") String message) {

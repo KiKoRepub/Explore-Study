@@ -12,6 +12,7 @@ import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMem
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -53,9 +54,6 @@ public class MemoryController extends AIController{
     private static final String DEFAULT_CONVERSATION_ID = "007";
 
 
-    public MemoryController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @PostMapping("/push")
     public ResponseEntity<String> push(@RequestParam("message") String message){

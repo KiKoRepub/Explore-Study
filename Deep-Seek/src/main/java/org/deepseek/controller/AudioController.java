@@ -1,10 +1,13 @@
 package org.deepseek.controller;
 
+import org.deepseek.service.AudioService;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiAudioSpeechModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.audio.speech.SpeechPrompt;
 import org.springframework.ai.openai.audio.speech.SpeechResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,23 +22,16 @@ import java.io.InputStream;
 @RequestMapping("/audio")
 public class AudioController extends AIController{
 
-
     @Autowired
-    public OpenAiAudioSpeechModel audioSpeechModel;
+    private AudioService audioService;
 
-    public AudioController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
+
+
+    @PostMapping("/generate")
+    public ResponseEntity<Boolean> generateAudio(@RequestParam("message") String message){
+
+        return ResponseEntity.ok(audioService.generateAudio(message));
     }
-
-
-    @PostMapping("/push")
-    public void pushTextToAudio(@RequestParam("message") String message){
-
-        SpeechPrompt prompt = new SpeechPrompt(message);
-        SpeechResponse response = audioSpeechModel.call(prompt);
-        byte[] audioBytes = response.getResult().getOutput();
-    }
-
 
     public static void main(String[] args) {
         String audioPath = "audios/audio.wav";

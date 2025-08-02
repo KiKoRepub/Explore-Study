@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/meta")
 public class MetaController extends AIController {
-    public MetaController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @GetMapping("/push")
     public String pushOther(@RequestParam("message") String message) {

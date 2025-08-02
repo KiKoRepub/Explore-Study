@@ -1,31 +1,23 @@
 package org.deepseek.controller;
 
-import ai.z.openapi.service.model.ChatMessage;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.parser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
-import org.deepseek.tools.GetWeatherTool;
-import org.deepseek.utils.PromptUtils;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.deepseek.DeepSeekAssistantMessage;
+import org.springframework.ai.deepseek.DeepSeekChatOptions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,10 +28,6 @@ public class ChatController extends AIController {
 
     @Autowired
     ChatMemoryRepository memoryRepository;
-
-    public ChatController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @GetMapping("/push")
     public String push(@RequestParam("message") String message) {
@@ -110,9 +98,58 @@ public class ChatController extends AIController {
     }
 
 
-    @PostMapping("/memory-push")
-    public String memoryPush(@RequestParam("message") String message) {
+    @PostMapping("/reasoner-push")
+    public String resonerPush(@RequestParam("message")String message ) {
 
-        return "";
+        Prompt prompt = new Prompt(message, DeepSeekChatOptions.builder()
+                .model("deepseek-reasoner")
+                .temperature(1.5)
+                .build());
+
+        ChatResponse response = deepSeekChatModel.call(prompt);
+
+
+        DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) response.getResult().getOutput();
+
+        String resoningContent = output.getReasoningContent();
+        String result = output.getText();
+
+        System.out.println("result = " + result);
+        System.out.println("——————————————————————————————————————");
+        System.out.println("resoningContent = " + resoningContent);
+
+        return result;
+    }
+
+    @PostMapping("/stream/reasoner-push")
+    public Flux<Object> resonerStreamPush(@RequestParam("message") String message) {
+        Prompt prompt = new Prompt(message, DeepSeekChatOptions.builder()
+                .model("deepseek-reasoner")
+                .temperature(1.5)
+                .build());
+
+        Flux<ChatResponse> response = deepSeekChatModel.stream(prompt);
+
+
+
+        response.toIterable().forEach(resp -> {
+
+            DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) resp.getResult().getOutput();
+
+            String reasoningContent = output.getReasoningContent();
+
+            if (reasoningContent != null) {
+                System.out.print(reasoningContent + " ");
+            }
+        });
+
+        response.toIterable().forEach(resp -> {
+            DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) resp.getResult().getOutput();
+            String result = output.getText();
+            System.out.print(result + " ");
+        });
+
+        return response.map(resp -> resp.getResult().getOutput().getText());
+
     }
 }

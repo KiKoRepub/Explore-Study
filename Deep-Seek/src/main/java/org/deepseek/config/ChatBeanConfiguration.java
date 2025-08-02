@@ -39,9 +39,9 @@ public class ChatBeanConfiguration {
 
 
     @Bean
-    public ChatClient chatClient(ChatModel model,ChatMemory memory) {
-        System.out.println("model = " + model);
-        return ChatClient.builder(model)
+    public ChatClient chatClient(ChatModel deepSeekChatModel,ChatMemory memory) {
+        System.out.println("model = " + deepSeekChatModel);
+        return ChatClient.builder(deepSeekChatModel)
 //                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build()) // open memory function
                 .build();
     }

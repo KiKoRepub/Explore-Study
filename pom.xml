@@ -31,7 +31,21 @@
 
 
   <dependencyManagement>
+
+
+
+
+
+
     <dependencies>
+<!--        SpringAI alibaba -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-bom</artifactId>
+            <version>1.0.0.2</version>
+        </dependency>
+
+<!--      SpringAI -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-bom</artifactId>
@@ -96,21 +110,6 @@
     <scope>test</scope>
   </dependency>
 
-      <dependency>
-        <groupId>com.alibaba.cloud.ai</groupId>
-        <artifactId>spring-ai-alibaba-bom</artifactId>
-        <version>1.0.0.2</version>
-        <type>pom</type>
-        <scope>compile</scope>
-      </dependency>
-
-<!--    <dependency>-->
-<!--      <groupId>com.alibaba.cloud.ai</groupId>-->
-<!--      <artifactId>spring-ai-alibaba-starter</artifactId>-->
-<!--      <version>1.0.0-M6.1</version>-->
-<!--    </dependency>-->
-
-
 
     <dependency>
       <groupId>org.apache.rocketmq</groupId>
@@ -125,6 +124,11 @@
       <scope>compile</scope>
     </dependency>
 
+
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+      </dependency>
 
   </dependencies>
 

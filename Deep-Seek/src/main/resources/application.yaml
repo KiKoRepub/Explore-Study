@@ -8,52 +8,78 @@ spring:
   ai:
     model:
       image: zhipuai # 设置 图像处理的 AI 为 智谱 AI
-      chat: openai # 设置 聊天 AI 为 OpenAI
-      embedding: openai # 设置 向量生成 AI 为 OpenAI
+      chat: deepseek # 设置 聊天 AI 为 OpenAI
+      embedding: openai  # 设置 向量生成 AI 为 OpenAI
       audio:
-        speech: openai # 设置 语音合成 AI 为 OpenAI
+        speech: openai # 设置 语音合成 AI 为 dashscope
         transcription: openai # 设置 语音识别 AI 为 OpenAI
-    zhipuai:
+    dashscope:
+      rerank:
+        enabled: false
+        api-key: ${DASHSCOPE_RERANK_API_KEY}
       image:
-        api-key: ${ZHIPUAI_IMAGE_API_KEY}
-        base-url:  https://open.bigmodel.cn/api/paas
+        enabled: false
+        api-key: ${DASHSCOPE_IMAGE_API_KEY}
         options:
-            model: cogview-4-250304
-    openai:
+          model: wan2.2-t2i-flash # 试用 <97/100 2026-1-2
+      chat:
+        enabled: false
+        api-key: ${DASHSCOPE_CHAT_API_KEY}
+      embedding:
+        enabled: false
+        api-key: ${DASHSCOPE_EMBEDDING_API_KEY}
+      audio:
+        synthesis:
+          api-key: ${DASHSCOPE_AUDIO_API_KEY}
+          options:
+            model: cosyvoice-v2
+            response-format: wav
+            voice: longhua_v2 # 设置音色
+        transcription:
+          api-key: ${DASHSCOPE_AUDIO_API_KEY}
+    deepseek:
       api-key: ${DEEPSEEK_API_KEY}
       chat:
         options:
           model: deepseek-chat
         base-url: https://api.deepseek.com
+    zhipuai:
+      image:
+        api-key: ${ZHIPUAI_IMAGE_API_KEY}
+        base-url: https://open.bigmodel.cn/api/paas
+        options:
+          model: cogview-4-250304
+    openai:
       audio:
         speech:
           api-key: ${SILICONFLOW_API_KEY}
           base-url: https://api.siliconflow.cn
           options:
-#            voice: anna
+            #            voice: anna
             model: FunAudioLLM/CosyVoice2-0.5B
       #      base-url:  https://api.siliconflow.cn/v1
       embedding:
-#        enabled: true
+        #        enabled: true
         options:
           model: BAAI/bge-m3
-#          max-token: 512/
+          #          max-token: 512/
           dimensions: 1024
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
+      api-key: ${DEEPSEEK_API_KEY}
     mcp:
       client:
-#        toolcallback:
-#          enabled: true
+        #        toolcallback:
+        #          enabled: true
         name: mcp-client
         sse:
           connections:
             server1:
               url: http://localhost:8085
-#              sse-endpoint: /mcp/book
-#            server2:
-#              url: https://mcp.amap.com
-#              sse-endpoint: /sse?key=${AMAP_API_KEY}
+        #              sse-endpoint: /mcp/book
+        #            server2:
+        #              url: https://mcp.amap.com
+        #              sse-endpoint: /sse?key=${AMAP_API_KEY}
         enabled: true
         type: async
         request-timeout: 60000
@@ -88,6 +114,8 @@ extra:
     model: CogVideoX-Flash
   zhipu-completion:
     api-key: ${ZHIPUAI_COMPLETION_API_KEY}
+  dashscope-image:
+    resolve: qwen-vl-max #  100W
 cloudbed:
   url: https://pngcdn.cn/api/v1
   token: ${IMAGE_OSS_TOKEN}

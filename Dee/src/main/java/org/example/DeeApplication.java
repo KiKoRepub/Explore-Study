@@ -4,7 +4,7 @@ package org.example;
  * Hello world!
  *
  */
-public class App 
+public class DeeApplication
 {
     public static void main( String[] args )
     {

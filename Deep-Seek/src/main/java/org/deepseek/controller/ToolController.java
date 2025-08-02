@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ToolController extends AIController {
 
 
-    public ToolController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @GetMapping("/web-push")
     public String toolPush(@RequestParam("message") String message) {

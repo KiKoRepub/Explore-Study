@@ -9,8 +9,10 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public class FileUtils {
@@ -52,8 +54,12 @@ public class FileUtils {
 
     public static boolean downloadFromURL(String fileUrl, String fileName, ResourceType type) {
         // 构建 保存后的文件路径
-        String suffix = fileUrl.substring(fileUrl.lastIndexOf("."));
+
+        // 获取 后缀
+        String  imageURL = fileUrl.substring(0,  fileUrl.indexOf("?")); // 去除无关的 其他参数
+        String suffix = imageURL.substring(fileUrl.lastIndexOf("."));
         String saving = "";
+
         if (type == ResourceType.IMAGE)
              saving = IMG_PATH + "\\" + fileName + suffix;
         if (type == ResourceType.VIDEO)
@@ -78,6 +84,28 @@ public class FileUtils {
             LoggerUtils.error(e);
             return false;
         }
+    }
+    public static boolean downloadFromBuffer(ByteBuffer audioBuffer, String fileName, ResourceType type) {
+        String saving = "";
+        if (type == ResourceType.AUDIO){
+            saving = AUDIO_PATH;
+        }
+        String suffix = ".wav";
+
+        String  savePath = saving + "/" + fileName + suffix;
+
+
+        try(FileOutputStream fos = new FileOutputStream(savePath)){
+
+            fos.write(audioBuffer.array());
+        } catch (IOException e) {
+            LoggerUtils.error("下载失败",e);
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+
     }
 
 

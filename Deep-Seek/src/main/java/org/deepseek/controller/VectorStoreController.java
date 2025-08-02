@@ -1,6 +1,7 @@
 package org.deepseek.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
@@ -27,9 +28,6 @@ public class VectorStoreController extends AIController {
 
     public  static Map<String,List<Document>> vectorStoreMap = new HashMap<>();
 
-    public VectorStoreController(OpenAiChatModel openAiChatModel) {
-        super(openAiChatModel);
-    }
 
     @PostMapping("/add")
     public void addVectorStore() {
