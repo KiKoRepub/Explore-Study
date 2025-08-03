@@ -7,8 +7,11 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.deepseek.DeepSeekAssistantMessage;
 import org.springframework.ai.deepseek.DeepSeekChatModel;
 import org.springframework.ai.deepseek.DeepSeekChatOptions;
+import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Flux;
 
 @SpringBootTest
 public class ChatTest {
@@ -37,4 +40,17 @@ public class ChatTest {
 
     }
 
+
+    @Test
+    public void testOllamaChating(@Autowired OllamaChatModel ollamaChatModel){
+        System.out.println(ollamaChatModel.call("你是谁/no_think"));
+
+    }
+
+    @Test
+    public void testOllamaStreamChating(@Autowired OllamaChatModel ollamaChatModel){
+        Flux<String> stream = ollamaChatModel.stream("你是谁/no_think");
+        stream.toIterable().forEach(System.out::println);
+//        System.out.println(stream);
+    }
 }

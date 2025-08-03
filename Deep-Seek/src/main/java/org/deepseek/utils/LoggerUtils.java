@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 public class LoggerUtils {
 
-    private static Logger log = Logger.getLogger(LoggerUtils.class.getName());
+    private static final Logger log = Logger.getLogger(LoggerUtils.class.getName());
 
 
 
@@ -23,5 +23,8 @@ public class LoggerUtils {
         log.log(Level.OFF,message, e);
     }
 
+    public static void error(Throwable e,String message,Object ... args){
+        log.log(Level.OFF,String.format(message,args),e);
+    }
 
 }

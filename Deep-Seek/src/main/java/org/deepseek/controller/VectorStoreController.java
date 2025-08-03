@@ -34,7 +34,7 @@ public class VectorStoreController extends AIController {
 
         // 使用 TikaDocumentReader 对文档内容 进行读取，
         // 并 使用 TokenTextSplitter
-        File documentation = new File( "C:\\Users\\qazxc\\Downloads\\杭州凤凰中心附近餐饮推荐.md" );
+        File documentation = new File( "杭州凤凰中心附近餐饮推荐.md" );
         TikaDocumentReader tikaDocumentReader = new TikaDocumentReader(new FileSystemResource(documentation));
         TokenTextSplitter splitter = new TokenTextSplitter(100,200,10,400,
                 true);

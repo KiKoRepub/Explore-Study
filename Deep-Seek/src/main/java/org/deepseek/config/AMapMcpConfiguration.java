@@ -23,15 +23,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-@Data
-@Configuration
-@ConfigurationProperties(prefix = "amap")
+//@Data
+//@Configuration
+//@ConfigurationProperties(prefix = "amap")
 public class AMapMcpConfiguration {
 
 
      private String apiKey;
      private String baseUrl;
-    @Bean
+//    @Bean
     public List<NamedClientMcpTransport> aMapTransports() {
 //        joyAgent
         McpClientTransport transport = HttpClientSseClientTransport.builder(baseUrl)

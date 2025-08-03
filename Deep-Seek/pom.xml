@@ -15,6 +15,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <alibaba.spring.ai.version>1.0.0.2</alibaba.spring.ai.version>
+        <spring.ai.version>1.0.0</spring.ai.version>
     </properties>
 
     <dependencies>
@@ -26,31 +28,39 @@
             <scope>test</scope>
         </dependency>
 
-
+<!--    deepSeek -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-deepseek</artifactId>
-            <version>1.0.0</version>
+            <version>${spring.ai.version}</version>
         </dependency>
 
 <!--    阿里百炼 -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-            <version>1.0.0.2</version>
+            <version>${alibaba.spring.ai.version}</version>
         </dependency>
 
-<!--        OPENAPI -->
+<!--        ollama -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+            <version>${spring.ai.version}</version>
+        </dependency>
+
+
+<!--       openAI -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-openai</artifactId>
-            <version>1.0.0</version>
+            <version>${spring.ai.version}</version>
         </dependency>
 <!--        图像生成-->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-zhipuai</artifactId>
-            <version>1.0.0</version>
+            <version>${spring.ai.version}</version>
         </dependency>
 
 <!--        图像解析-->
@@ -60,13 +70,52 @@
                 <version>0.0.2</version>
         </dependency>
 
-<!-- 对话记忆 持久化-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>-->
-<!--        </dependency>-->
+<!-- 对话记忆 持久化 并引入数据库-->
 
 
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
+        </dependency>
+<!--    Redis 对聊天记录进行存储-->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-autoconfigure-memory</artifactId>
+            <version>${alibaba.spring.ai.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-memory-redis</artifactId>
+            <version>${alibaba.spring.ai.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+
+
+<!--  多数据源 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.31</version>
+        </dependency>
+
+<!--        Druid-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.2.23</version>
+        </dependency>
         <!-- 添加 Spring AI MCP client 依赖 -->
 
         <dependency>
@@ -78,13 +127,13 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
-            <version>1.0.0</version>
+            <version>${spring.ai.version}</version>
         </dependency>
 <!--        文档解析器 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-tika-document-reader</artifactId>
-            <version>1.0.0</version>
+            <version>${spring.ai.version}</version>
         </dependency>
 
 
@@ -103,12 +152,7 @@
             <artifactId>spring-ai-rag</artifactId>
         </dependency>
 
-<!--        正常使用的数据库 -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.31</version>
-        </dependency>
+
 
 
         <dependency>

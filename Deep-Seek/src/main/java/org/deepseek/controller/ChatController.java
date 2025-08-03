@@ -29,7 +29,7 @@ public class ChatController extends AIController {
     @Autowired
     ChatMemoryRepository memoryRepository;
 
-    @GetMapping("/push")
+    @PostMapping("/push")
     public String push(@RequestParam("message") String message) {
 
         ChatResponse response = chatClient.prompt(message)
@@ -45,7 +45,7 @@ public class ChatController extends AIController {
         return response.getResult().getOutput().getText();
     }
 
-    @GetMapping("/stream")
+    @PostMapping("/stream")
     public Flux<Object> streamChat(HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         String message = DEFAULT_PROMPT;

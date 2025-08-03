@@ -14,7 +14,8 @@ public class AIController {
     @Autowired
     protected ChatClient chatClient;
     @Autowired
-    @Qualifier("deepSeekChatModel")
+//    @Qualifier("deepSeekChatModel")
+    @Qualifier("ollamaChatModel")
     protected  ChatModel deepSeekChatModel;
 
 

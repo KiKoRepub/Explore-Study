@@ -8,7 +8,7 @@ spring:
   ai:
     model:
       image: zhipuai # 设置 图像处理的 AI 为 智谱 AI
-      chat: deepseek # 设置 聊天 AI 为 OpenAI
+      chat: ollama # 设置 聊天 AI 为 OpenAI
       embedding: openai  # 设置 向量生成 AI 为 OpenAI
       audio:
         speech: openai # 设置 语音合成 AI 为 dashscope
@@ -43,6 +43,9 @@ spring:
         options:
           model: deepseek-chat
         base-url: https://api.deepseek.com
+    ollama:
+      base-url: http://localhost:11434
+      chat.model: qwen3:8b
     zhipuai:
       image:
         api-key: ${ZHIPUAI_IMAGE_API_KEY}
@@ -67,6 +70,18 @@ spring:
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
       api-key: ${DEEPSEEK_API_KEY}
+    chat:
+      memory:
+        repository:
+          jdbc:
+            schema: classpath:/sql/schema.sql
+            initialize-schema: always
+    memory:
+      redis:
+        host: localhost
+        port: 6379
+        timeout: 60000
+        password:
     mcp:
       client:
         #        toolcallback:
@@ -92,17 +107,27 @@ spring:
     retry:
       max-attempts: 10 # 最大尝试次数
   datasource:
-    url: jdbc:postgresql://localhost:5432/vector
-    username: postgres
-    password: 123456
+    dynamic:
+      strict: true
+      datasource:
+        mysql:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/deep_seek?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+          username: root
+          password: 123456
+        postgresql:
+          url: jdbc:postgresql://localhost:5432/vector
+          username: postgres
+          password: 123456
+      primary: mysql
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 20MB
-amap:
-  api-key: ${AMAP_API_KEY}
-  base-url: https://mcp.amap.com
+#amap:
+#  api-key: ${AMAP_API_KEY}
+#  base-url: https://mcp.amap.com
 
 extra:
   zhipu-image:

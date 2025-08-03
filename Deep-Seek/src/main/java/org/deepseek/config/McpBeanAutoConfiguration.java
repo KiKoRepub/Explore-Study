@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@Configuration
+//@Configuration
 public class McpBeanAutoConfiguration {
-    @Autowired
+//    @Autowired
     private List<McpAsyncClient> mcpAsyncClients;
 
-    @Bean
+//    @Bean
     public ToolCallbackProvider aMapToolCallbackProvider(){
 
         McpAsyncClient mcpClient = mcpAsyncClients.get(0);
