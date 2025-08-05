@@ -152,4 +152,10 @@ public class ChatController extends AIController {
         return response.map(resp -> resp.getResult().getOutput().getText());
 
     }
+
+
+
+
+
+
 }
