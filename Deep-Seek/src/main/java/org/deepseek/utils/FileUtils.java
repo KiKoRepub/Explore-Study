@@ -26,7 +26,7 @@ public class FileUtils {
         File saveDir = new File(IMG_PATH);
 
         if (!saveDir.exists() && !saveDir.mkdirs()) {
-            LoggerUtils.error("创建目录失败", new IOException("创建目录失败"));
+            LoggerUtils.error(new IOException("创建目录失败"),"创建目录失败");
         }
 
         String fileReferName = file.getOriginalFilename();
@@ -99,7 +99,7 @@ public class FileUtils {
 
             fos.write(audioBuffer.array());
         } catch (IOException e) {
-            LoggerUtils.error("下载失败",e);
+            LoggerUtils.error(e,"下载失败");
             e.printStackTrace();
             return false;
         }

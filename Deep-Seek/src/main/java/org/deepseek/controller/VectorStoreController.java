@@ -11,6 +11,7 @@ import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +35,8 @@ public class VectorStoreController extends AIController {
 
         // 使用 TikaDocumentReader 对文档内容 进行读取，
         // 并 使用 TokenTextSplitter
-        File documentation = new File( "杭州凤凰中心附近餐饮推荐.md" );
-        TikaDocumentReader tikaDocumentReader = new TikaDocumentReader(new FileSystemResource(documentation));
+        ClassPathResource documentation = new ClassPathResource( "knowledge/杭州凤凰中心附近餐饮推荐.md");
+        TikaDocumentReader tikaDocumentReader = new TikaDocumentReader(documentation);
         TokenTextSplitter splitter = new TokenTextSplitter(100,200,10,400,
                 true);
         List<Document> documents = splitter.apply(tikaDocumentReader.get());

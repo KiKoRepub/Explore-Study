@@ -7,19 +7,22 @@ import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourcePrope
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceProperties;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDatasourceAopProperties;
 import com.mysql.cj.jdbc.MysqlDataSource;
+import org.deepseek.callback.RedisChatMemoryRepositoryCallback;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
-import org.springframework.ai.chat.memory.repository.jdbc.MysqlChatMemoryRepositoryDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import redis.clients.jedis.Jedis;
 
 import javax.sql.DataSource;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 @Configuration
 public class JDBCMemoryConfiguration {
@@ -28,7 +31,7 @@ public class JDBCMemoryConfiguration {
     @Autowired
     DynamicDataSourceProvider provider; // 动态数据源
     @Autowired
-    RedisChatMemoryRepository redisChatMemoryRepository; // Redis 存储
+    RedisChatMemoryRepositoryCallback redisChatMemoryRepository; // Redis 存储
 
     // 默认的 基于 ConcurrentHashMap 的内存存储
 //    @Bean
@@ -69,5 +72,4 @@ public class JDBCMemoryConfiguration {
                 .maxMessages(20)
                 .build();
     }
-
 }

@@ -28,21 +28,21 @@
             <scope>test</scope>
         </dependency>
 
-<!--    deepSeek -->
+        <!--    deepSeek -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-deepseek</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
 
-<!--    阿里百炼 -->
+        <!--    阿里百炼 -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
             <version>${alibaba.spring.ai.version}</version>
         </dependency>
 
-<!--        ollama -->
+        <!--        ollama -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-ollama</artifactId>
@@ -50,34 +50,34 @@
         </dependency>
 
 
-<!--       openAI -->
+        <!--       openAI -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-openai</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
-<!--        图像生成-->
+        <!--        图像生成-->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-zhipuai</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
 
-<!--        图像解析-->
+        <!--        图像解析-->
         <dependency>
-                <groupId>ai.z.openapi</groupId>
-                <artifactId>zai-sdk</artifactId>
-                <version>0.0.2</version>
+            <groupId>ai.z.openapi</groupId>
+            <artifactId>zai-sdk</artifactId>
+            <version>0.0.2</version>
         </dependency>
 
-<!-- 对话记忆 持久化 并引入数据库-->
+        <!-- 对话记忆 持久化 并引入数据库-->
 
 
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
-        </dependency>
-<!--    Redis 对聊天记录进行存储-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.ai</groupId>-->
+<!--            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>-->
+<!--        </dependency>-->
+        <!--    Redis 对聊天记录进行存储-->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-autoconfigure-memory</artifactId>
@@ -95,9 +95,7 @@
             <artifactId>jedis</artifactId>
             <version>5.2.0</version>
         </dependency>
-
-
-<!--  多数据源 -->
+        <!--  多数据源 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
@@ -110,11 +108,18 @@
             <version>8.0.31</version>
         </dependency>
 
-<!--        Druid-->
+        <!--        Druid-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>1.2.23</version>
+        </dependency>
+
+<!--        操作数据库 mybatisPlus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.7</version>
         </dependency>
         <!-- 添加 Spring AI MCP client 依赖 -->
 
@@ -123,21 +128,36 @@
             <artifactId>spring-ai-starter-mcp-client-webflux</artifactId>
         </dependency>
 
-<!-- RAG -->
+        <!-- RAG -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
-            <version>${spring.ai.version}</version>
+            <artifactId>spring-ai-rag</artifactId>
         </dependency>
-<!--        文档解析器 -->
+        <!--        文档解析器 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-tika-document-reader</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers-standard-package</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.19.0</version>
+        </dependency>
 
 
-<!--        VectorStore -->
+        <!--        VectorStore -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -147,12 +167,12 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-advisors-vector-store</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-rag</artifactId>
+            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
-
-
 
 
         <dependency>
@@ -162,19 +182,18 @@
         </dependency>
 
         <!--        无法导入 -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-model-deepseek</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.ai</groupId>-->
+        <!--            <artifactId>spring-ai-starter-model-deepseek</artifactId>-->
+        <!--        </dependency>-->
 
 
-<!--        导入 支付宝的 SDK -->
-<!--        <dependency>-->
-<!--            <groupId>com.alipay.sdk</groupId>-->
-<!--            <artifactId>alipay-sdk-java</artifactId>-->
-<!--            <version>4.40.272.ALL</version>-->
-<!--        </dependency>-->
-
+        <!--        导入 支付宝的 SDK -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.alipay.sdk</groupId>-->
+        <!--            <artifactId>alipay-sdk-java</artifactId>-->
+        <!--            <version>4.40.272.ALL</version>-->
+        <!--        </dependency>-->
 
 
     </dependencies>
@@ -189,15 +208,15 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
-
     <repositories>
-<!--       java-stream-player -->
+        <!--           java-stream-player-->
+<!--        <repository>-->
+<!--            <id>central</id>-->
+<!--            <url>https://repo1.maven.org/maven2</url>-->
+<!--        </repository>-->
+
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -210,6 +229,9 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <name>Central Portal Snapshots</name>
@@ -223,7 +245,7 @@
             </snapshots>
         </repository>
 
-<!--        导入 openAI 之前 需要导入 这个仓库-->
+        <!--        导入 openAI 之前 需要导入 这个仓库-->
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>

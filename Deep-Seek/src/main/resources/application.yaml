@@ -70,18 +70,18 @@ spring:
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
       api-key: ${DEEPSEEK_API_KEY}
-    chat:
-      memory:
-        repository:
-          jdbc:
-            schema: classpath:/sql/schema.sql
-            initialize-schema: always
+#    chat:
+#      memory:
+#        repository:
+#          jdbc:
+#            schema: classpath:/sql/schema.sql
+#            initialize-schema: always
     memory:
       redis:
         host: localhost
         port: 6379
         timeout: 60000
-        password:
+        password: redis
     mcp:
       client:
         #        toolcallback:
@@ -92,9 +92,9 @@ spring:
             server1:
               url: http://localhost:8085
         #              sse-endpoint: /mcp/book
-        #            server2:
-        #              url: https://mcp.amap.com
-        #              sse-endpoint: /sse?key=${AMAP_API_KEY}
+            server2:
+              url: https://mcp.amap.com
+              sse-endpoint: /sse?key=${AMAP_API_KEY}
         enabled: true
         type: async
         request-timeout: 60000
@@ -120,6 +120,7 @@ spring:
           username: postgres
           password: 123456
       primary: mysql
+
   servlet:
     multipart:
       enabled: true
@@ -128,7 +129,6 @@ spring:
 #amap:
 #  api-key: ${AMAP_API_KEY}
 #  base-url: https://mcp.amap.com
-
 extra:
   zhipu-image:
     resolve: GLM-4.1V-Thinking-Flash
@@ -144,3 +144,5 @@ extra:
 cloudbed:
   url: https://pngcdn.cn/api/v1
   token: ${IMAGE_OSS_TOKEN}
+mybatis-plus:
+  mapper-locations: org.deepseek.mapper.*

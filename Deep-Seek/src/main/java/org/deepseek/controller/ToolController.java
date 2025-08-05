@@ -1,21 +1,28 @@
 package org.deepseek.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.deepseek.tools.GetWeatherTool;
+import org.deepseek.tools.ChatHistoryManageTool;
 import org.deepseek.tools.WebSearchTool;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tool")
 public class ToolController extends AIController {
 
+    @Autowired
+    ChatHistoryManageTool saveCacheGetTool;
 
+    @Autowired
+    ChatMemory chatMemory;
 
     @GetMapping("/web-push")
     public String toolPush(@RequestParam("message") String message) {
@@ -40,6 +47,32 @@ public class ToolController extends AIController {
                 .tools(new GetWeatherTool())
                 .call()
                 .content();
+
+        System.out.println("AI 返回的结果为" + content);
+
+        return content;
+    }
+
+    @PostMapping("/redis-push")
+    public String toolRedisPush(@RequestParam("message") String message,
+    @RequestParam("conversation_id") String conversationId) {
+
+        String templateStr = """
+                当前对话的id为 {conversation_id}
+                """;
+
+        PromptTemplate template = PromptTemplate.builder()
+                .template(templateStr)
+                .build();
+        Prompt userPrompt = template.create(Map.of("conversation_id", conversationId));
+
+        String content = chatClient.prompt(userPrompt)
+                .user(message)
+                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(conversationId).build())
+                .tools(saveCacheGetTool)
+                .call()
+                .content();
+
 
         System.out.println("AI 返回的结果为" + content);
 

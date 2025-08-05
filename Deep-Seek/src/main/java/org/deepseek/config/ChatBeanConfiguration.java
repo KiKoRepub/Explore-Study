@@ -3,6 +3,7 @@ package org.deepseek.config;
 import ai.z.openapi.ZhipuAiClient;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -21,7 +22,7 @@ public class ChatBeanConfiguration {
 
 
     @Bean
-    public ChatClient chatClient(ChatModel ollamaChatModel, ChatMemory memory) {
+    public ChatClient chatClient(ChatModel ollamaChatModel) {
         System.out.println("model = " + ollamaChatModel);
         return ChatClient.builder(ollamaChatModel)
 //                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build()) // open memory function

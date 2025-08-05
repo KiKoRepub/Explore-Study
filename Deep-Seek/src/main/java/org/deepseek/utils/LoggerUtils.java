@@ -17,9 +17,9 @@ public class LoggerUtils {
     }
 
     public static void error(Throwable e){
-        error("",e);
+        error(e,"报错的默认回复");
     }
-    public static void error(String message, Throwable e){
+    public static void error( Throwable e,String message){
         log.log(Level.OFF,message, e);
     }
 
