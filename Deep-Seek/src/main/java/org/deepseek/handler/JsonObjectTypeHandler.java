@@ -12,6 +12,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * JSONObject 类型处理器
+ *  用来序列化成数据库中的 VARCHAR 类型
+ */
 @MappedTypes(JSONObject.class)
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JsonObjectTypeHandler extends BaseTypeHandler<JSONObject> {

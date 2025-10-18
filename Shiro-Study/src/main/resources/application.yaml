@@ -1,0 +1,21 @@
+server:
+  port: 6364
+spring:
+  application:
+    name: shiro-study
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/shiro?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+  #显示SQL语句
+    show-sql: true
+  #不加下面这句则不会默认创建MyISAM引擎的数据库
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  #自己重写的配置类，默认使用utf8编码
+    properties.hibernate.dialect: org.shiro.config.MySQLConfig

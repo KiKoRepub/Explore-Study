@@ -3,6 +3,8 @@ package org.deepseek.controller;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -122,7 +124,7 @@ public class ChatController extends AIController {
     }
 
     @PostMapping("/stream/reasoner-push")
-    public Flux<Object> resonerStreamPush(@RequestParam("message") String message) {
+    public Flux<Object> reasonerStreamPush(@RequestParam("message") String message) {
         Prompt prompt = new Prompt(message, DeepSeekChatOptions.builder()
                 .model("deepseek-reasoner")
                 .temperature(1.5)
@@ -151,6 +153,19 @@ public class ChatController extends AIController {
 
         return response.map(resp -> resp.getResult().getOutput().getText());
 
+    }
+
+
+    @PostMapping("/stream/logging-push")
+    public Flux<String> loggingStreamPush(@RequestParam("message") String message) {
+
+        Flux<String> flux = chatClient.prompt()
+                .advisors(List.of(SimpleLoggerAdvisor.builder().build()))
+                .user(message)
+                .stream()
+                .content();
+
+        return flux.map(resp -> resp);
     }
 
 

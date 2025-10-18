@@ -3,7 +3,7 @@ package org.deepseek.service.impl;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.deepseek.entity.ChatMessage;
+import org.deepseek.entity.memory.ChatMessage;
 import org.deepseek.mapper.ChatMessageMapper;
 import org.deepseek.service.ChatMessageService;
 import org.springframework.stereotype.Service;

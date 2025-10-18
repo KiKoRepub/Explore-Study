@@ -1,0 +1,16 @@
+server:
+  port: 6363
+
+spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat.model: qwen3:8b
+
+    memory:
+      redis:
+        host: localhost
+        password: redis
+
+qr-code:
+  api-key: ${QR_CODE_API_KEY}

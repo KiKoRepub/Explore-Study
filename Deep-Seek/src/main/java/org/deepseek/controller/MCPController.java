@@ -5,6 +5,7 @@ import io.modelcontextprotocol.spec.McpSchema;
 import org.deepseek.callback.AMapToolCallbackProvider;
 import org.deepseek.entity.BookRentInfo;
 import org.deepseek.utils.LoggerUtils;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.mcp.client.autoconfigure.NamedClientMcpTransport;
@@ -27,7 +28,7 @@ public class MCPController extends AIController{
 //    @Qualifier("aMapToolCallbackProvider")
 //    ToolCallbackProvider aMapToolProvider;
     @Autowired
-    @Qualifier("mcpAsyncToolCallbacks")
+//    @Qualifier("mcpAsyncToolCallbacks")
     ToolCallbackProvider mcpToolProvider;
 
 
@@ -35,17 +36,7 @@ public class MCPController extends AIController{
 
     @GetMapping("/push")
     public String push(@RequestParam("message") String message) {
-        ChatResponse response = chatClient.prompt()
-                .user(message)
-                .toolCallbacks(mcpToolProvider)
-                .call()
-                .chatResponse();
-//
-//
-        String text = response.getResult().getOutput().getText();
-//        System.out.println("text = " + text);
-//        return text;
-//        System.out.println(mcpToolProvider);
+
         System.out.println("mcpToolProvider = " + mcpToolProvider);
         System.out.println(mcpToolProvider.getToolCallbacks().length);
 
@@ -62,26 +53,26 @@ public class MCPController extends AIController{
         return infos;
     }
 
-    @Autowired
-    private List<McpAsyncClient> mcpAsyncClients;
-    @PostMapping("/amap/weather")
-    private void getMcpAMapTool(@RequestParam("city") String city){
-        McpAsyncClient mcpAsyncClient = mcpAsyncClients.get(0);
-        Mono<McpSchema.CallToolResult> resultMono = mcpAsyncClient.listTools()
-                .flatMap(tools -> {
-            return mcpAsyncClient.callTool(
-                    new McpSchema.CallToolRequest(
-                            "maps_weather",
-                            Map.of("city", city)
-                    )
-            );
-        });
-
-        resultMono.subscribe(result -> {
-//            LoggerUtils.info("result = " + result);
-            System.out.println("result = " + result);
-        });
-    }
+//    @Autowired
+//    private List<McpAsyncClient> mcpAsyncClients;
+//    @PostMapping("/amap/weather")
+//    private void getMcpAMapTool(@RequestParam("city") String city){
+//        McpAsyncClient mcpAsyncClient = mcpAsyncClients.get(0);
+//        Mono<McpSchema.CallToolResult> resultMono = mcpAsyncClient.listTools()
+//                .flatMap(tools -> {
+//            return mcpAsyncClient.callTool(
+//                    new McpSchema.CallToolRequest(
+//                            "maps_weather",
+//                            Map.of("city", city)
+//                    )
+//            );
+//        });
+//
+//        resultMono.subscribe(result -> {
+////            LoggerUtils.info("result = " + result);
+//            System.out.println("result = " + result);
+//        });
+//    }
 
 
 }

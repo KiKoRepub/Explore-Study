@@ -19,15 +19,49 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud.ai</groupId>-->
+<!--            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>-->
+<!--            <version>${alibaba.spring.ai.version}</version>-->
+<!--        </dependency>-->
 
+<!--   ollama -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+            <version>${spring.ai.version}</version>
+        </dependency>
 
+<!--        Redis 作为聊天记录的缓存 -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-autoconfigure-memory</artifactId>
+            <version>${alibaba.spring.ai.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-memory-redis</artifactId>
+            <version>${alibaba.spring.ai.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-pay</artifactId>
+            <version>4.7.0</version>
         </dependency>
     </dependencies>
 </project>

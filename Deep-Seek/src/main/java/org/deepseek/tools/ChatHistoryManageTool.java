@@ -1,7 +1,7 @@
 package org.deepseek.tools;
 
 
-import org.deepseek.entity.ChatMessage;
+import org.deepseek.entity.memory.ChatMessage;
 import org.deepseek.service.ChatMessageService;
 import org.deepseek.utils.RedisUtils;
 import org.springframework.ai.tool.annotation.Tool;
@@ -35,6 +35,7 @@ public class ChatHistoryManageTool {
     }
 
     @Tool(description = "读取之前保存到数据库中的聊天记录")
+//    @PreAuthorize("hasRole('ADMIN')") // 只有管理员角色才能调用此方法
     public String readMySQLRecord(@ToolParam(description = "之前的对话id",required = true) String conversationId){
         List<ChatMessage> cacheList =
                 cpService.readRecords(conversationId);

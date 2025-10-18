@@ -1,3 +1,8 @@
-AI ÏîÄ¿²Î¿¼£º
+AI é¡¹ç›®å‚è€ƒï¼š
   1. https://github.com/keras-team/keras/tree/master/examples
-  2. AI Áµ°®¼üÅÌ
+  2. AI æ‹çˆ±é”®ç›˜
+
+
+
+
+  1. é€šè¿‡AI ç”Ÿæˆå°è¯´ ç„¶åæ„å»º AIè§’è‰²ï¼ŒèŠå¤©å®¤

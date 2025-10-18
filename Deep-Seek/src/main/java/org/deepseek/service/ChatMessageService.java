@@ -1,7 +1,7 @@
 package org.deepseek.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.deepseek.entity.ChatMessage;
+import org.deepseek.entity.memory.ChatMessage;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -5,7 +5,6 @@ import org.deepseek.tools.ChatHistoryManageTool;
 import org.deepseek.tools.WebSearchTool;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -19,7 +18,7 @@ import java.util.Map;
 public class ToolController extends AIController {
 
     @Autowired
-    ChatHistoryManageTool saveCacheGetTool;
+    ChatHistoryManageTool chatHistoryManageTool;
 
     @Autowired
     ChatMemory chatMemory;
@@ -60,7 +59,7 @@ public class ToolController extends AIController {
         String templateStr = """
                 当前对话的id为 {conversation_id}
                 """;
-
+        
         PromptTemplate template = PromptTemplate.builder()
                 .template(templateStr)
                 .build();
@@ -69,7 +68,7 @@ public class ToolController extends AIController {
         String content = chatClient.prompt(userPrompt)
                 .user(message)
                 .advisors(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(conversationId).build())
-                .tools(saveCacheGetTool)
+                .tools(chatHistoryManageTool)
                 .call()
                 .content();
 
@@ -78,6 +77,8 @@ public class ToolController extends AIController {
 
         return content;
     }
+
+
 
 
 

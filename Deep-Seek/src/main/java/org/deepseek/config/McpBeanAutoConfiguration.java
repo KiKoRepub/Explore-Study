@@ -1,6 +1,7 @@
 package org.deepseek.config;
 
 import io.modelcontextprotocol.client.McpAsyncClient;
+import io.modelcontextprotocol.spec.McpSchema;
 import org.deepseek.callback.AMapToolCallbackProvider;
 import org.springframework.ai.mcp.AsyncMcpToolCallback;
 import org.springframework.ai.tool.ToolCallback;
@@ -22,6 +23,7 @@ public class McpBeanAutoConfiguration {
         McpAsyncClient mcpClient = mcpAsyncClients.get(0);
         ToolCallback[] toolCallbacks = mcpClient.listTools().map((response) -> {
             return response.tools().stream().map((tool) -> {
+//                new McpSchema.Tool()
                 return new AsyncMcpToolCallback(mcpClient, tool);
             }).toArray(ToolCallback[]::new);
         }).block();

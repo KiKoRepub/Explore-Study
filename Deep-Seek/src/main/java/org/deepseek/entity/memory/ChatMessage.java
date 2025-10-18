@@ -1,4 +1,4 @@
-package org.deepseek.entity;
+package org.deepseek.entity.memory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;

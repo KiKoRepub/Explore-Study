@@ -2,7 +2,7 @@ package org.deepseek.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.deepseek.entity.ChatMessage;
+import org.deepseek.entity.memory.ChatMessage;
 import org.springframework.ai.chat.messages.Message;
 import redis.clients.jedis.Jedis;
 

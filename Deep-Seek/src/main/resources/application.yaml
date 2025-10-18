@@ -8,7 +8,7 @@ spring:
   ai:
     model:
       image: zhipuai # 设置 图像处理的 AI 为 智谱 AI
-      chat: ollama # 设置 聊天 AI 为 OpenAI
+      chat: ollama # 设置 聊天 AI 为 ollama( 本地AI )
       embedding: openai  # 设置 向量生成 AI 为 OpenAI
       audio:
         speech: openai # 设置 语音合成 AI 为 dashscope
@@ -84,26 +84,34 @@ spring:
         password: redis
     mcp:
       client:
-        #        toolcallback:
-        #          enabled: true
+        toolcallback:
+          enabled: true
         name: mcp-client
-        sse:
-          connections:
-            server1:
-              url: http://localhost:8085
-        #              sse-endpoint: /mcp/book
-            server2:
-              url: https://mcp.amap.com
-              sse-endpoint: /sse?key=${AMAP_API_KEY}
+#        sse:
+#          connections:
+#            server1:
+#              url: http://localhost:8085
+#        #              sse-endpoint: /mcp/book
+#            server2:
+#              url: https://mcp.amap.com
+#              sse-endpoint: /sse?key=${AMAP_API_KEY}
+        stdio:
+          servers-configuration: classpath:mcp/mcp-stdio-servers.json
         enabled: true
-        type: async
+        type: sync
         request-timeout: 60000
     vectorstore:
-      pgvector:
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1024
-        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+      milvus:
+        client:
+          host: "localhost"
+          port: 19530
+          username: "root"
+          password: "milvus"
+        databaseName: "default"
+        collectionName: "vector_store"
+        embeddingDimension: 1536
+        indexType: IVF_FLAT
+        metricType: COSINE
     retry:
       max-attempts: 10 # 最大尝试次数
   datasource:
@@ -115,10 +123,10 @@ spring:
           url: jdbc:mysql://localhost:3306/deep_seek?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
           username: root
           password: 123456
-        postgresql:
-          url: jdbc:postgresql://localhost:5432/vector
-          username: postgres
-          password: 123456
+#        postgresql:
+#          url: jdbc:postgresql://localhost:5432/vector
+#          username: postgres
+#          password: 123456
       primary: mysql
 
   servlet:
@@ -126,6 +134,12 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 20MB
+mybatis-plus:
+  mapper-locations: org.deepseek.mapper.*
+
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
 #amap:
 #  api-key: ${AMAP_API_KEY}
 #  base-url: https://mcp.amap.com
@@ -144,5 +158,4 @@ extra:
 cloudbed:
   url: https://pngcdn.cn/api/v1
   token: ${IMAGE_OSS_TOKEN}
-mybatis-plus:
-  mapper-locations: org.deepseek.mapper.*
+

@@ -8,6 +8,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,13 +20,14 @@ public class ChatBeanConfiguration {
     private String zhiPuCompletionApiKey;
 
 
-
+    @Autowired
+    private ChatMemory memory;
 
     @Bean
     public ChatClient chatClient(ChatModel ollamaChatModel) {
         System.out.println("model = " + ollamaChatModel);
         return ChatClient.builder(ollamaChatModel)
-//                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build()) // open memory function
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build()) // open memory function
                 .build();
     }
 

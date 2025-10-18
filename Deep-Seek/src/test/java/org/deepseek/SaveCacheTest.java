@@ -1,6 +1,6 @@
 package org.deepseek;
 
-import org.deepseek.entity.ChatMessage;
+import org.deepseek.entity.memory.ChatMessage;
 import org.deepseek.service.ChatMessageService;
 import org.deepseek.utils.RedisUtils;
 import org.junit.jupiter.api.Test;
