@@ -2,7 +2,12 @@ server:
   port: 6666
 spring:
   config:
-    import: optional:classpath:.env[.properties]
+    import:
+    - classpath:config/zhi_pu.yml
+    - classpath:config/dash_scope.yml
+    - classpath:config/cloud_bed.yml
+    - classpath:config/mcp.yml
+    - optional:classpath:.env[.properties]
   main:
     allow-bean-definition-overriding: true
   ai:
@@ -13,30 +18,6 @@ spring:
       audio:
         speech: openai # 设置 语音合成 AI 为 dashscope
         transcription: openai # 设置 语音识别 AI 为 OpenAI
-    dashscope:
-      rerank:
-        enabled: false
-        api-key: ${DASHSCOPE_RERANK_API_KEY}
-      image:
-        enabled: false
-        api-key: ${DASHSCOPE_IMAGE_API_KEY}
-        options:
-          model: wan2.2-t2i-flash # 试用 <97/100 2026-1-2
-      chat:
-        enabled: false
-        api-key: ${DASHSCOPE_CHAT_API_KEY}
-      embedding:
-        enabled: false
-        api-key: ${DASHSCOPE_EMBEDDING_API_KEY}
-      audio:
-        synthesis:
-          api-key: ${DASHSCOPE_AUDIO_API_KEY}
-          options:
-            model: cosyvoice-v2
-            response-format: wav
-            voice: longhua_v2 # 设置音色
-        transcription:
-          api-key: ${DASHSCOPE_AUDIO_API_KEY}
     deepseek:
       api-key: ${DEEPSEEK_API_KEY}
       chat:
@@ -46,12 +27,6 @@ spring:
     ollama:
       base-url: http://localhost:11434
       chat.model: qwen3:8b
-    zhipuai:
-      image:
-        api-key: ${ZHIPUAI_IMAGE_API_KEY}
-        base-url: https://open.bigmodel.cn/api/paas
-        options:
-          model: cogview-4-250304
     openai:
       audio:
         speech:
@@ -66,50 +41,26 @@ spring:
         options:
           model: BAAI/bge-m3
           #          max-token: 512/
-          dimensions: 1024
+          dimensions: 1536  # 修改为实际输出维度
         api-key: ${SILICONFLOW_API_KEY}
         base-url: https://api.siliconflow.cn
       api-key: ${DEEPSEEK_API_KEY}
-#    chat:
-#      memory:
-#        repository:
-#          jdbc:
-#            schema: classpath:/sql/schema.sql
-#            initialize-schema: always
     memory:
       redis:
         host: localhost
         port: 6379
         timeout: 60000
         password: redis
-    mcp:
-      client:
-        toolcallback:
-          enabled: true
-        name: mcp-client
-#        sse:
-#          connections:
-#            server1:
-#              url: http://localhost:8085
-#        #              sse-endpoint: /mcp/book
-#            server2:
-#              url: https://mcp.amap.com
-#              sse-endpoint: /sse?key=${AMAP_API_KEY}
-        stdio:
-          servers-configuration: classpath:mcp/mcp-stdio-servers.json
-        enabled: true
-        type: sync
-        request-timeout: 60000
     vectorstore:
       milvus:
         client:
           host: "localhost"
           port: 19530
-          username: "root"
-          password: "milvus"
+          username: kiko
+          password: 123456
         databaseName: "default"
-        collectionName: "vector_store"
-        embeddingDimension: 1536
+        collectionName: "vector_store"  # 使用新集合名避免schema冲突
+        embeddingDimension: 1536  # 修改为与embedding模型一致
         indexType: IVF_FLAT
         metricType: COSINE
     retry:
@@ -143,19 +94,4 @@ logging:
 #amap:
 #  api-key: ${AMAP_API_KEY}
 #  base-url: https://mcp.amap.com
-extra:
-  zhipu-image:
-    resolve: GLM-4.1V-Thinking-Flash
-  zhipu-chat:
-    unknow: GLM-4.5-Flash
-  zhipu-video:
-    api-key: ${ZHIPUAI_VIDEO_API_KEY}
-    model: CogVideoX-Flash
-  zhipu-completion:
-    api-key: ${ZHIPUAI_COMPLETION_API_KEY}
-  dashscope-image:
-    resolve: qwen-vl-max #  100W
-cloudbed:
-  url: https://pngcdn.cn/api/v1
-  token: ${IMAGE_OSS_TOKEN}
 

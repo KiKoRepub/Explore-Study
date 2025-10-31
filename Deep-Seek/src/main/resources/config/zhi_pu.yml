@@ -1,0 +1,18 @@
+zhipu:
+  image:
+    resolve: GLM-4.1V-Thinking-Flash
+  chat:
+    unknown: GLM-4.5-Flash
+  video:
+    api-key: ${ZHIPUAI_VIDEO_API_KEY}
+    model: CogVideoX-Flash
+  completion:
+    api-key: ${ZHIPUAI_COMPLETION_API_KEY}
+spring:
+  ai:
+    zhipuai:
+      image:
+        api-key: ${ZHIPUAI_IMAGE_API_KEY}
+        base-url: https://open.bigmodel.cn/api/paas
+        options:
+          model: cogview-4-250304

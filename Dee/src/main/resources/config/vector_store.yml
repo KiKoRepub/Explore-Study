@@ -1,0 +1,14 @@
+spring:
+  ai:
+    vectorstore:
+      milvus:
+        client:
+          host: "localhost"
+          port: 19530
+          username: kiko
+          password: 123456
+        databaseName: "default"
+        collectionName: "vector_store"  # 使用新集合名避免schema冲突
+        embeddingDimension: 1536  # 修改为与embedding模型一致
+        indexType: IVF_FLAT
+        metricType: COSINE

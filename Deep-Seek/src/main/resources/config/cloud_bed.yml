@@ -1,0 +1,3 @@
+cloudbed:
+  url: https://pngcdn.cn/api/v1
+  token: ${IMAGE_OSS_TOKEN}

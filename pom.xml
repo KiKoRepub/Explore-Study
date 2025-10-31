@@ -19,6 +19,7 @@
         <module>Mcp-Server</module>
         <module>Dee</module>
         <module>Shiro-Study</module>
+        <module>SilkGame</module>
     </modules>
     <packaging>pom</packaging>
 

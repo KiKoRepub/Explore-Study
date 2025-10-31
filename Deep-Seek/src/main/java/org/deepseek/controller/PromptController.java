@@ -3,16 +3,12 @@ package org.deepseek.controller;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,7 +84,7 @@ public class PromptController extends AIController {
     }
     // 通过 value 加载文件 内容，转换成对象
     @Value("classpath: /prompts/systemTestPrompt.txt")
-    private Resource systemTestPrompt;
+    private Resource systemFileTestPrompt;
 
     @PostMapping("/systemTemplate/file")
     public String systemTemplateFile(@RequestParam("message") String userInput,
@@ -97,7 +93,7 @@ public class PromptController extends AIController {
         // 定义模板字符串
 //        systemTestPrompt = new UrlResource("http://localhost:8080/prompts/systemTestPrompt.txt");
 
-        SystemPromptTemplate systemTemplate = new SystemPromptTemplate(systemTestPrompt);
+        SystemPromptTemplate systemTemplate = new SystemPromptTemplate(systemFileTestPrompt);
         Message systemPrompt = systemTemplate.createMessage(Map.of("name", aiName == null ? "KiKoRepub" : aiName,
                 "language", language == null ? "Java" : language));
         Prompt prompt = new Prompt(List.of(systemPrompt));

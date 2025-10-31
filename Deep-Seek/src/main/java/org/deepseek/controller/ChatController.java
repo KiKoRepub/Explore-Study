@@ -3,15 +3,13 @@ package org.deepseek.controller;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.deepseek.DeepSeekAssistantMessage;
+import org.springframework.ai.deepseek.DeepSeekChatModel;
 import org.springframework.ai.deepseek.DeepSeekChatOptions;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +74,7 @@ public class ChatController extends AIController {
 
 
         }
-        Flux<ChatResponse> stream = deepSeekChatModel.stream(new Prompt(DEFAULT_PROMPT));
+        Flux<ChatResponse> stream = chatModel.stream(new Prompt(DEFAULT_PROMPT));
 
 //      Flux<String>
         return stream.map(resp -> resp.getResult().getOutput().getText());
@@ -102,25 +100,27 @@ public class ChatController extends AIController {
 
     @PostMapping("/reasoner-push")
     public String resonerPush(@RequestParam("message")String message ) {
+        if (chatModel instanceof DeepSeekChatModel) {
 
-        Prompt prompt = new Prompt(message, DeepSeekChatOptions.builder()
-                .model("deepseek-reasoner")
-                .temperature(1.5)
-                .build());
+            Prompt prompt = new Prompt(message, DeepSeekChatOptions.builder()
+                    .model("deepseek-reasoner")
+                    .temperature(1.5)
+                    .build());
 
-        ChatResponse response = deepSeekChatModel.call(prompt);
+            ChatResponse response = chatModel.call(prompt);
 
 
-        DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) response.getResult().getOutput();
+            DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) response.getResult().getOutput();
 
-        String resoningContent = output.getReasoningContent();
-        String result = output.getText();
+            String resoningContent = output.getReasoningContent();
+            String result = output.getText();
 
-        System.out.println("result = " + result);
-        System.out.println("——————————————————————————————————————");
-        System.out.println("resoningContent = " + resoningContent);
+            System.out.println("result = " + result);
+            System.out.println("——————————————————————————————————————");
+            System.out.println("resoningContent = " + resoningContent);
 
-        return result;
+            return result;
+        }else return "当前模型不支持 深度思考功能";
     }
 
     @PostMapping("/stream/reasoner-push")
@@ -130,7 +130,7 @@ public class ChatController extends AIController {
                 .temperature(1.5)
                 .build());
 
-        Flux<ChatResponse> response = deepSeekChatModel.stream(prompt);
+        Flux<ChatResponse> response = chatModel.stream(prompt);
 
 
 

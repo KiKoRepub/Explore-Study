@@ -1,0 +1,29 @@
+dashscope:
+  image:
+    resolve: qwen-vl-max #  100W
+spring:
+  ai:
+    dashscope:
+      rerank:
+        enabled: false
+        api-key: ${DASHSCOPE_RERANK_API_KEY}
+      image:
+        enabled: false
+        api-key: ${DASHSCOPE_IMAGE_API_KEY}
+        options:
+          model: wan2.2-t2i-flash # 试用 <97/100 2026-1-2
+      chat:
+        enabled: false
+        api-key: ${DASHSCOPE_CHAT_API_KEY}
+      embedding:
+        enabled: false
+        api-key: ${DASHSCOPE_EMBEDDING_API_KEY}
+      audio:
+        synthesis:
+          api-key: ${DASHSCOPE_AUDIO_API_KEY}
+          options:
+            model: cosyvoice-v2
+            response-format: wav
+            voice: longhua_v2 # 设置音色
+        transcription:
+          api-key: ${DASHSCOPE_AUDIO_API_KEY}

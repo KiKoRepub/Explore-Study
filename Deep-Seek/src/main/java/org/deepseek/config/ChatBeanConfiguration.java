@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ChatBeanConfiguration {
 
-    @Value("${extra.zhipu-completion.api-key}")
+    @Value("${zhipu.completion.api-key}")
     private String zhiPuCompletionApiKey;
 
 

@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.dee.controller;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.ollama.OllamaChatModel;

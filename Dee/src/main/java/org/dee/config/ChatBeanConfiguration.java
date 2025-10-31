@@ -1,4 +1,4 @@
-package org.example.config;
+package org.dee.config;
 
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.ai.chat.client.ChatClient;
@@ -18,6 +18,5 @@ public class ChatBeanConfiguration {
         return ChatClient.builder(model)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
                 .build();
-
     }
 }

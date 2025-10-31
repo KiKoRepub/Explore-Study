@@ -178,11 +178,6 @@
             <artifactId>spring-ai-starter-vector-store-milvus</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.modelcontextprotocol.sdk</groupId>
-            <artifactId>mcp-spring-webflux</artifactId>
-            <version>0.10.0</version>
-        </dependency>
 
 
         <dependency>

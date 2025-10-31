@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class ZhiPuAiImageServiceImpl implements ImageService {
 
-    @Value("${extra.zhipu-image.resolve}")
+    @Value("${zhipu.image.resolve}")
     private String imageResolveModelName;
 
     @Autowired

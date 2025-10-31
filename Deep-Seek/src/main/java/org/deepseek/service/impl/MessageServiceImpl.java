@@ -9,11 +9,14 @@ import org.apache.rocketmq.common.message.MessageClientIDSetter;
 import org.apache.rocketmq.common.message.MessageExt;
 
 import org.deepseek.service.MessageService;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,6 +33,22 @@ public class MessageServiceImpl implements MessageService {
                                     String secretKey) {
         String toReturn = topic + messageId + accessKey + secretKey;
         return new Message(topic, messageId.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Override
+    public Prompt createRAGPrompt(String message, List<Document> documents, int topK) {
+        String prompt = """
+                你是一个智能助手，你可以根据下面搜索到的内容回复用户
+                ### 用户的问题是
+                %s
+                ### 搜索到的内容是
+                %s
+               """;
+        prompt = String.format(prompt,message,documents.get(0).getText());
+
+        return new Prompt(prompt);
+
+
     }
 
 }

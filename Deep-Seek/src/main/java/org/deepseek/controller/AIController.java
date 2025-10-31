@@ -1,6 +1,7 @@
 package org.deepseek.controller;
 
 
+import org.deepseek.service.MessageService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,11 @@ public class AIController {
     @Autowired
     protected ChatClient chatClient;
     @Autowired
+    protected MessageService messageService;
+    @Autowired
 //    @Qualifier("deepSeekChatModel")
     @Qualifier("ollamaChatModel")
-    protected  ChatModel deepSeekChatModel;
+    protected  ChatModel chatModel;
 
 
 

@@ -1,0 +1,4 @@
+dashscope:
+  image:
+    resolve: qwen-vl-max # 100W
+

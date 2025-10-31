@@ -28,13 +28,15 @@ public class ToolController extends AIController {
         // 使用 tools 方法 填入 需要使用的工具
         // 工具需要满足至少有一个方法标注了 @tool,然后参数有 @toolParam 注解
         // AI 会尝试调用工具方法来实现结果(AI自己选择)
-        ChatResponse response = chatClient
-                .prompt()
-                .user(message)
-                .tools(new WebSearchTool())
-                .call()
-                .chatResponse();
-        return response.getResult().getOutput().getText();
+       System.out.println(message);
+       ChatResponse response = chatClient
+               .prompt()
+               .user(message)
+               .tools(new WebSearchTool())
+               .call()
+               .chatResponse();
+       return response.getResult().getOutput().getText();
+        // return "6666666666";
     }
 
     @GetMapping("/weather-push")

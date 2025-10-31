@@ -29,7 +29,7 @@ import java.io.File;
 @Component
 public class DashScopeImageServiceImpl implements ImageService {
 
-    @Value("${extra.dashscope-image.resolve}")
+    @Value("${dashscope.image.resolve}")
     private   String imageResolveModelName;
 
     @Autowired

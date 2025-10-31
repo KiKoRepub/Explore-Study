@@ -1,8 +1,15 @@
-package org.example.controller;
+package org.dee.controller;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -12,6 +19,23 @@ public class ChatController {
 
     @Autowired
     ChatClient chatClient;
+
+    @Autowired
+    ChatMemory chatMemory;
+
+    @GetMapping("/push")
+    @ApiOperation(value = "使用记忆与模型聊天", notes = "向聊天模型发送消息，并根据聊天内存检索响应")
+    public String chat(@RequestParam("message") String message){
+
+        ChatResponse response = chatClient.prompt()
+                .user(message)
+                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "default"))
+                .call()
+                .chatResponse();
+
+        return response.getResult().getOutput().getText();
+    }
 }
 
 /*

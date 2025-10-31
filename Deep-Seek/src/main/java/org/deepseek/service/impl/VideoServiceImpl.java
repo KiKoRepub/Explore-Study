@@ -24,9 +24,9 @@ import java.util.Map;
 public class VideoServiceImpl implements VideoService {
 
 
-    @Value("${extra.zhipu-video.model}")
+    @Value("${zhipu.video.model}")
     private String videoModelName;
-    @Value("${extra.zhipu-video.api-key}")
+    @Value("${zhipu.video.api-key}")
     private String apiKey;
 
     private final WebClient webClient;
