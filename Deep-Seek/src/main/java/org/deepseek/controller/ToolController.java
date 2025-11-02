@@ -36,7 +36,6 @@ public class ToolController extends AIController {
                .call()
                .chatResponse();
        return response.getResult().getOutput().getText();
-        // return "6666666666";
     }
 
     @GetMapping("/weather-push")

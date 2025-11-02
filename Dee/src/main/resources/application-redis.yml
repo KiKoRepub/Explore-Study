@@ -1,0 +1,23 @@
+## Redis 配置示例
+#spring:
+#  redis:
+#    host: localhost
+#    port: 6379
+#    password: # 如果有密码请填写
+#    database: 0
+#    timeout: 3000ms
+#    lettuce:
+#      pool:
+#        max-active: 8
+#        max-idle: 8
+#        min-idle: 0
+#        max-wait: -1ms
+#
+## 聊天记录配置
+#chat:
+#  redis:
+#    # 默认过期时间（秒）
+#    default-expire-seconds: 3600
+#    # 键前缀
+#    key-prefix: "chat:conversation:"
+#    expire-key-prefix: "chat:expire:"

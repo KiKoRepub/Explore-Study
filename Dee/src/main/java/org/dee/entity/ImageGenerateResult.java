@@ -1,13 +1,17 @@
 package org.dee.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class ImageGenerateResult {
 
-
+    @ApiModelProperty("Image URL")
     private String imageUrl;
+
+    @ApiModelProperty("Base64 Encoded Image")
     private String imageBase64;
+    @ApiModelProperty("Image Name")
     private String imageName;
 
 

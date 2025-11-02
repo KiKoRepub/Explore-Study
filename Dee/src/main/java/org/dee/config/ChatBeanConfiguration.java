@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration;
 public class ChatBeanConfiguration {
 
     @Bean
-    public ChatClient chatClient(ChatModel model, ChatMemory memory) {
+    public ChatClient chatClient(ChatModel model) {
         return ChatClient.builder(model)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
+//                .defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())
                 .build();
     }
 }
