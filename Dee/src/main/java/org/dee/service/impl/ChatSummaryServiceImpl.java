@@ -1,5 +1,6 @@
 package org.dee.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dee.dto.ChatMessageDTO;
 import org.dee.dto.ChatSummaryDTO;
 import org.dee.service.ChatSummaryService;
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * 聊天记录摘要生成服务实现
  */
+@Slf4j
 @Service
 public class ChatSummaryServiceImpl implements ChatSummaryService {
 

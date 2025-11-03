@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.dee.enums.PersistenceType;
 
 import java.time.LocalDateTime;
 
@@ -25,5 +26,10 @@ public class ChatRecord {
 
     @ApiModelProperty("Creation Timestamp")
     private LocalDateTime createdAt;
+
+    @ApiModelProperty("Persistence Type: auto-自动持久化, manual-手动持久化")
+    private String persistenceTypeCode;
+    @ApiModelProperty("Persistence Time")
+    private LocalDateTime persistenceTime;
 
 }

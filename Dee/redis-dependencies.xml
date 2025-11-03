@@ -1,0 +1,40 @@
+<!-- Redis 相关依赖配置 -->
+<!-- 将以下依赖添加到 pom.xml 的 <dependencies> 标签中 -->
+
+<!-- Spring Data Redis（核心依赖） -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+
+<!-- Lettuce 客户端（推荐，支持连接池和异步操作） -->
+<dependency>
+    <groupId>io.lettuce</groupId>
+    <artifactId>lettuce-core</artifactId>
+</dependency>
+
+<!-- Jackson（用于 JSON 序列化） -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+</dependency>
+
+<!-- 
+    可选：如果需要使用 Jedis 客户端
+    注意：Jedis 不支持多线程，不推荐在生产环境使用
+-->
+<!--
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+</dependency>
+-->
+
+<!-- 
+    可选：Apache Commons Pool2（连接池）
+    Lettuce 默认使用此连接池
+-->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-pool2</artifactId>
+</dependency>

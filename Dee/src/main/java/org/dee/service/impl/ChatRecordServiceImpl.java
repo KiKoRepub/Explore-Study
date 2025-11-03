@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.dee.dto.ChatMessageDTO;
 import org.dee.entity.ChatRecord;
 import org.dee.entity.ChatRecordZip;
+import org.dee.enums.PersistenceType;
 import org.dee.mapper.ChatRecordMapper;
 import org.dee.mapper.ChatRecordZipMapper;
 import org.dee.service.ChatRecordService;
@@ -34,7 +35,7 @@ public class ChatRecordServiceImpl implements ChatRecordService {
         return chatRecordMapper.insert(record) > 0;
     }
     @Override
-    public boolean batchSaveChatRecords(String conversationId,List<ChatMessageDTO> messageList) {
+    public boolean batchSaveChatRecords(String conversationId,List<ChatMessageDTO> messageList,String persistentTypeCode){
         List<ChatRecord> recordList = new ArrayList<>();
         for (ChatMessageDTO message : messageList) {
             ChatRecord record = new ChatRecord();
@@ -43,6 +44,7 @@ public class ChatRecordServiceImpl implements ChatRecordService {
             record.setBotResponse(message.getBotResponse());
 
             record.setCreatedAt(LocalDateTime.now());
+            record.setPersistenceTypeCode(persistentTypeCode);
 
             recordList.add(record);
         }
@@ -53,16 +55,21 @@ public class ChatRecordServiceImpl implements ChatRecordService {
     }
 
     @Override
-    public boolean saveChatRecordZip(String conversationId, String title, String compressedData) {
+    public boolean saveChatRecordZip(String conversationId, String title, String compressedData, String persistenceTypeCode) {
         // 检查是否已存在该对话的概要记录
         LambdaQueryWrapper<ChatRecordZip> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ChatRecordZip::getConversationId, conversationId);
         ChatRecordZip existingRecord = chatRecordZipMapper.selectOne(queryWrapper);
 
+        LocalDateTime now = LocalDateTime.now();
+
+
         if (existingRecord != null) {
             // 更新已存在的记录
             existingRecord.setTitle(title);
             existingRecord.setCompressedData(compressedData);
+            existingRecord.setPersistenceTypeCode(persistenceTypeCode);
+            existingRecord.setPersistenceTime(now);
             return chatRecordZipMapper.updateById(existingRecord) > 0;
         } else {
             // 插入新记录
@@ -70,8 +77,9 @@ public class ChatRecordServiceImpl implements ChatRecordService {
             newRecord.setConversationId(conversationId);
             newRecord.setTitle(title);
             newRecord.setCompressedData(compressedData);
+            newRecord.setPersistenceTypeCode(persistenceTypeCode);
+            newRecord.setPersistenceTime(now);
             return chatRecordZipMapper.insert(newRecord) > 0;
-
         }
     }
 }

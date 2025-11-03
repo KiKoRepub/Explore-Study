@@ -50,13 +50,16 @@
             <version>${alibaba.spring.ai.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>5.2.0</version>
         </dependency>
-
 <!--    数据库 -->
         <dependency>
             <groupId>mysql</groupId>

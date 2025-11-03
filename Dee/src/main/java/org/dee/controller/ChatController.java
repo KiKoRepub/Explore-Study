@@ -3,6 +3,7 @@ package org.dee.controller;
 import io.swagger.annotations.ApiOperation;
 import org.dee.entity.ChatRecord;
 import org.dee.entity.ChatRecordZip;
+import org.dee.enums.PersistenceType;
 import org.dee.service.ChatContextService;
 import org.dee.service.ChatRecordService;
 import org.dee.service.CacheChatService;
@@ -88,7 +89,7 @@ public class ChatController {
     public String persistConversation(@RequestParam("conversationId") String conversationId) {
         try {
 
-            cacheChatService.persistChatMessages(conversationId);
+            cacheChatService.persistChatMessages(conversationId, PersistenceType.MANUAL);
             return "持久化成功";
         } catch (Exception e) {
             e.printStackTrace();

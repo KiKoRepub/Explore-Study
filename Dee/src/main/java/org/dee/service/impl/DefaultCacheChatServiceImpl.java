@@ -2,6 +2,7 @@ package org.dee.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dee.dto.ChatMessageDTO;
+import org.dee.enums.PersistenceType;
 import org.dee.service.ChatRecordService;
 import org.dee.service.ChatSummaryService;
 import org.dee.service.CacheChatService;
@@ -88,8 +89,9 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
     }
 
     @Override
-    public void persistChatMessages(String conversationId) {
-        log.info("开始持久化对话记录: conversationId={}", conversationId);
+    public void persistChatMessages(String conversationId, PersistenceType persistenceType) {
+        String typeDesc = persistenceType.getDescription();
+        log.info("开始持久化对话记录: conversationId={}, 类型={}", conversationId, typeDesc);
 
         // 1. 获取 内存 中的所有消息
         List<Message> messages = getChatMessages(conversationId);
@@ -99,32 +101,25 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
             return;
         }
 
-
-        // 将消息按用户和助手配对
+        // 2. 将消息按用户和助手配对
         List<ChatMessageDTO> chatMessageDTOList = convertMessage(messages);
 
-        // 批量保存聊天记录
-        chatRecordService.batchSaveChatRecords(conversationId,chatMessageDTOList);
+        // 3. 批量保存聊天记录
+        chatRecordService.batchSaveChatRecords(conversationId, chatMessageDTOList,persistenceType.getCode());
+        log.info("批量保存聊天记录完成: conversationId={}, 总数={}, 类型={}",
+                conversationId, chatMessageDTOList.size(), typeDesc);
 
-
-
-
-        log.info("批量保存聊天记录完成: conversationId={}, 总数={}",
-                conversationId, chatMessageDTOList.size());
-
-        // 3. 生成对话摘要
+        // 4. 生成对话摘要
         String summary = chatSummaryService.generateSummary(chatMessageDTOList);
         String title = generateTitle(messages);
 
-        // 4. 保存概要到数据库
-        boolean summarySuccess = chatRecordService.saveChatRecordZip(conversationId, title, summary);
-        log.info("保存对话概要: conversationId={}, 成功={}", conversationId, summarySuccess);
+        // 5. 保存概要到数据库（包含持久化类型）
+        boolean summarySuccess = chatRecordService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
+        log.info("保存对话概要: conversationId={}, 成功={}, 类型={}", conversationId, summarySuccess, typeDesc);
 
-        // 5. 清理 内存 中的聊天记录
-
+        // 6. 清理 内存 中的聊天记录
         chatMemory.clear(conversationId);
-
-
+        log.info("清理内存缓存完成: conversationId={}", conversationId);
     }
 
     /**

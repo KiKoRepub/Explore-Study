@@ -1,5 +1,6 @@
 package org.dee.service;
 
+import org.dee.enums.PersistenceType;
 import org.springframework.ai.chat.messages.Message;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public interface CacheChatService {
      * @param botResponse 机器人回复
      * @param expireSeconds 过期时间（秒）
      */
-    boolean cacheChatMessage(String conversationId, String userMessage, String botResponse, long expireSeconds);
+    boolean cacheChatMessage(String conversationId, String userMessage, String botResponse,long expireSeconds);
 
     /**
      * 获取对话的所有消息
@@ -29,6 +30,7 @@ public interface CacheChatService {
     /**
      * 批量持久化对话记录到数据库
      * @param conversationId 对话ID
+     * @param persistenceType 持久化类型（自动/手动）
      */
-    void persistChatMessages(String conversationId);
+    void persistChatMessages(String conversationId, PersistenceType persistenceType);
 }
