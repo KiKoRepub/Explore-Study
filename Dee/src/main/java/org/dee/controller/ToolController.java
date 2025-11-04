@@ -1,5 +1,6 @@
 package org.dee.controller;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.dee.entity.SQLTool;
@@ -24,7 +25,7 @@ public class ToolController {
     /**
      * 将已存在的工具加载到数据库
      */
-    @PostMapping("/load")
+    @PostMapping("/toDatabase")
     @ApiOperation(value = "加载工具到数据库", notes = "扫描所有带@MyTool注解的类，将工具信息保存到数据库")
     public ResultBean<Map<String, Object>> loadToolsToDatabase() {
         try {
@@ -100,4 +101,19 @@ public class ToolController {
             return ResultBean.error(ErrorCodeEnum.FAIL, "删除失败: " + e.getMessage());
         }
     }
+
+
+    @GetMapping("/loadCallBack")
+    @ApiOperation(value = "加载启用的工具回调", notes = "获取所有启用状态的工具并转换为 ToolCallback 数组")
+    public ResultBean<Object> loadEnabledToolCallbacks() {
+        try {
+            Object callbacks = toolService.selectEnabledToolCallbacks();
+
+            return ResultBean.success(JSON.toJSONString(callbacks));
+        } catch (Exception e) {
+            return ResultBean.error(ErrorCodeEnum.FAIL, "加载失败: " + e.getMessage());
+        }
+    }
+
+
 }

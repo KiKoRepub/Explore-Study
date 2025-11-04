@@ -8,6 +8,7 @@ import org.dee.service.ChatContextService;
 import org.dee.service.ChatRecordService;
 import org.dee.service.CacheChatService;
 import org.dee.service.ToolService;
+import org.dee.service.impl.ToolServiceImpl;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -42,13 +43,13 @@ public class ChatController {
     @GetMapping("/push")
     @ApiOperation(value = "使用记忆与模型聊天", notes = "向聊天模型发送消息，并根据聊天内存检索响应")
     public String chat(@RequestParam(value = "message") String message,
-                       @RequestParam(value = "conversationId",required = false) String conversationId,
-                       @RequestParam(value = "expireSeconds",required = false, defaultValue = "3600") long expireSeconds){
+                       @RequestParam(value = "conversationId", required = false) String conversationId,
+                       @RequestParam(value = "expireSeconds", required = false, defaultValue = "3600") long expireSeconds) {
 
         if (conversationId == null) conversationId = UUID.randomUUID().toString();
 
 
-        System.out.println("——————————————————————————"+conversationId);
+        System.out.println("——————————————————————————" + conversationId);
 
         // 加载上下文：获取历史对话记录和概要
         String contextPrompt = buildContextPrompt(conversationId, message);
@@ -70,14 +71,33 @@ public class ChatController {
     @GetMapping("/tool")
     @ApiOperation(value = "使用工具与模型聊天", notes = "向聊天模型发送消息，并使用工具进行辅助")
     public String chatWithTool(@RequestParam(value = "message") String message,
-                               @RequestParam(value = "conversationId",required = false) String conversationId,
-                               @RequestParam(value = "expireSeconds",required = false, defaultValue = "3600") long expireSeconds) {
+                               @RequestParam(value = "conversationId", required = false) String conversationId,
+                               @RequestParam(value = "expireSeconds", required = false, defaultValue = "3600") long expireSeconds) {
 
         if (conversationId == null) conversationId = UUID.randomUUID().toString();
         System.out.println("——————————————————————————" + conversationId);
 
+        String inputSchema = """
+                {
+                            "type": "object",
+                            "properties": {
+                                "input": {
+                                    "type": "string",
+                                    "description": "要查询天气的城市名称，例如：北京、上海、广州"
+                                }
+                            },
+                            "required": ["input"]
+                         
+                        }
+                                
+                """;
         ChatResponse response = chatClient.prompt()
                 .user(message)
+                .toolCallbacks(ToolServiceImpl.buildToolFromString(
+                        "用来获取 特定城市天气的 工具",
+                        "WeatherTool",
+                        inputSchema
+                ))
                 .call()
                 .chatResponse();
 
@@ -86,6 +106,7 @@ public class ChatController {
 
     /**
      * 手动触发持久化
+     *
      * @param conversationId 对话ID
      * @return 执行结果
      */
@@ -105,6 +126,7 @@ public class ChatController {
 
     /**
      * 构建包含上下文的提示词
+     *
      * @param conversationId 对话ID
      * @param currentMessage 当前用户消息
      * @return 包含上下文的完整提示词
@@ -122,7 +144,7 @@ public class ChatController {
 
         // 2. 优先从缓存加载历史对话记录
         List<org.dee.dto.ChatMessageDTO> cachedMessages = cacheChatService.getCachedChatMessages(conversationId, org.dee.dto.ChatMessageDTO.class);
-        
+
         if (cachedMessages != null && !cachedMessages.isEmpty()) {
             // 从缓存加载
             contextBuilder.append("[最近对话]\n");

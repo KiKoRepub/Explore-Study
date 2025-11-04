@@ -20,7 +20,7 @@ import java.util.List;
  * 使用 RedisService 进行线程安全的 Redis 操作
  */
 @Slf4j
-@Service
+//@Service
 public class RedisCacheChatService implements CacheChatService {
     
     @Autowired

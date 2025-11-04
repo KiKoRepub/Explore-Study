@@ -29,13 +29,10 @@ public class SQLTool {
     @ApiModelProperty("工具类的完整类名")
     private String className;
 
-    @TableField("method_name")
-    @ApiModelProperty("工具方法名")
-    private String methodName;
 
-    @TableField("parameters")
+    @TableField("input_schema")
     @ApiModelProperty("工具参数定义(JSON格式)")
-    private String parameters;
+    private String inputSchema;
 
     @TableField("enabled")
     @ApiModelProperty("是否启用: 1-启用, 0-禁用")

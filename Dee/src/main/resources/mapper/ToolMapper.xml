@@ -3,10 +3,11 @@
 <mapper namespace="org.dee.mapper.ToolMapper">
 
     <insert id="batchInsert" parameterType="java.util.List">
-        INSERT INTO tool (tool_name, description, class_name, method_name, parameters, enabled, category, created_at, updated_at)
+        INSERT INTO tool (tool_name, description, class_name, input_schema, enabled, category, created_at, updated_at)
         VALUES
         <foreach collection="list" item="tool" separator=",">
-            (#{tool.toolName}, #{tool.description}, #{tool.className}, #{tool.methodName}, #{tool.parameters}, #{tool.enabled}, #{tool.category}, #{tool.createdAt}, #{tool.updatedAt})
+            (#{tool.toolName}, #{tool.description}, #{tool.className},
+             #{tool.inputSchema}, #{tool.enabled}, #{tool.category}, #{tool.createdAt}, #{tool.updatedAt})
         </foreach>
     </insert>
 
