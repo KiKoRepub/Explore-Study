@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Tool Management API",
+    "description": "工具管理系统 API 接口集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. 加载工具到数据库",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/tool/load",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tool", "load"]
+        },
+        "description": "扫描所有带@MyTool注解的类，将工具信息保存到数据库"
+      },
+      "response": []
+    },
+    {
+      "name": "2. 获取所有工具",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/tool/list",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tool", "list"]
+        },
+        "description": "从数据库查询所有工具列表"
+      },
+      "response": []
+    },
+    {
+      "name": "3. 获取启用的工具",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/tool/enabled",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tool", "enabled"]
+        },
+        "description": "从数据库查询所有启用状态的工具"
+      },
+      "response": []
+    },
+    {
+      "name": "4. 切换工具状态",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/tool/1/toggle",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tool", "1", "toggle"]
+        },
+        "description": "启用或禁用指定的工具（将路径中的1替换为实际的工具ID）"
+      },
+      "response": []
+    },
+    {
+      "name": "5. 删除工具",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/tool/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["tool", "1"]
+        },
+        "description": "从数据库删除指定的工具（将路径中的1替换为实际的工具ID）"
+      },
+      "response": []
+    }
+  ]
+}

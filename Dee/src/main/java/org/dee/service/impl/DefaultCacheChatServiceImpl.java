@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Slf4j
 //@Service
-//@ConditionalOnMissingBean(CacheChatService.class)
+@ConditionalOnMissingBean(CacheChatService.class)
 public class DefaultCacheChatServiceImpl implements CacheChatService {
 
 

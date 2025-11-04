@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ImageTool {
 
 
-    @Tool
+    @Tool(description = "根据提示生成图像")
     public ImageGenerateResult generateImage(String prompt) {
 
         return new ImageGenerateResult("https://example.com/image.png",null,null);

@@ -7,10 +7,12 @@ import org.dee.enums.PersistenceType;
 import org.dee.service.ChatContextService;
 import org.dee.service.ChatRecordService;
 import org.dee.service.CacheChatService;
+import org.dee.service.ToolService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,9 @@ public class ChatController {
 
     @Autowired
     CacheChatService cacheChatService;
+
+    @Autowired
+    ToolService toolService;
 
     @GetMapping("/push")
     @ApiOperation(value = "使用记忆与模型聊天", notes = "向聊天模型发送消息，并根据聊天内存检索响应")
@@ -62,22 +67,22 @@ public class ChatController {
         return botResponse;
     }
 
-//    @PostMapping("/record/save")
-//    @ApiOperation(value = "保存聊天记录", notes = "将聊天记录持久化到数据库")
-//    public boolean saveChatRecord(@RequestParam("conversationId") String conversationId,
-//                                     @RequestParam("userMessage") String userMessage,
-//                                     @RequestParam("botResponse") String botResponse) {
-//        return chatRecordService.saveChatRecord(conversationId, userMessage, botResponse);
-//    }
+    @GetMapping("/tool")
+    @ApiOperation(value = "使用工具与模型聊天", notes = "向聊天模型发送消息，并使用工具进行辅助")
+    public String chatWithTool(@RequestParam(value = "message") String message,
+                               @RequestParam(value = "conversationId",required = false) String conversationId,
+                               @RequestParam(value = "expireSeconds",required = false, defaultValue = "3600") long expireSeconds) {
 
+        if (conversationId == null) conversationId = UUID.randomUUID().toString();
+        System.out.println("——————————————————————————" + conversationId);
 
-//    @PostMapping("/record/zip/save")
-//    @ApiOperation(value = "保存对话概要", notes = "将对话概要持久化到数据库，如果已存在则更新")
-//    public boolean saveChatRecordZip(@RequestParam("conversationId") String conversationId,
-//                                           @RequestParam("title") String title,
-//                                           @RequestParam("compressedData") String compressedData) {
-//        return chatRecordService.saveChatRecordZip(conversationId, title, compressedData);
-//    }
+        ChatResponse response = chatClient.prompt()
+                .user(message)
+                .call()
+                .chatResponse();
+
+        return response.getResult().getOutput().getText();
+    }
 
     /**
      * 手动触发持久化
