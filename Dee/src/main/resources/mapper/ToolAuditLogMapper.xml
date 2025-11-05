@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dee.mapper.ToolAuditLogMapper">
+
+    <select id="selectByConversationId" resultType="org.dee.entity.ToolAuditLog">
+        SELECT * FROM tool_audit_log
+        WHERE conversation_id = #{conversationId}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByToolName" resultType="org.dee.entity.ToolAuditLog">
+        SELECT * FROM tool_audit_log
+        WHERE tool_name = #{toolName}
+        ORDER BY created_at DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="selectByTimeRange" resultType="org.dee.entity.ToolAuditLog">
+        SELECT * FROM tool_audit_log
+        WHERE created_at BETWEEN #{startTime} AND #{endTime}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="countToolUsage" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tool_audit_log
+        WHERE tool_name = #{toolName}
+        <if test="startTime != null and endTime != null">
+            AND created_at BETWEEN #{startTime} AND #{endTime}
+        </if>
+    </select>
+
+    <select id="selectFailedLogs" resultType="org.dee.entity.ToolAuditLog">
+        SELECT * FROM tool_audit_log
+        WHERE status = 'FAILED'
+        ORDER BY created_at DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO tool_audit_log (
+            conversation_id, request_id, tool_name, method_name, status,
+            parameters, result, error_message, execution_time,
+            created_at, start_at, end_at, user_id, ip_address
+        )
+        VALUES
+        <foreach collection="logs" item="log" separator=",">
+            (
+                #{log.conversationId}, #{log.requestId}, #{log.toolName}, #{log.methodName}, #{log.status},
+                #{log.parameters}, #{log.result}, #{log.errorMessage}, #{log.executionTime},
+                #{log.createdAt}, #{log.startAt}, #{log.endAt}, #{log.userId}, #{log.ipAddress}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

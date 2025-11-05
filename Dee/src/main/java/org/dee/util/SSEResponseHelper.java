@@ -54,15 +54,15 @@ public class SSEResponseHelper {
         new Thread(() -> {
             try {
                 // 构建请求
-                ChatClient.ChatClientRequestSpec promptSpec = chatClient.prompt().user(prompt);
+                ChatClient.ChatClientRequestSpec requestSpec = chatClient.prompt().user(prompt);
                 
                 // 如果有工具回调，添加工具
                 if (toolCallbacks != null && !toolCallbacks.isEmpty()) {
-                    promptSpec = promptSpec.toolCallbacks(toolCallbacks);
+                    requestSpec = requestSpec.toolCallbacks(toolCallbacks);
                 }
                 
                 // 使用流式API
-                Flux<ChatResponse> responseFlux = promptSpec.stream().chatResponse();
+                Flux<ChatResponse> responseFlux = requestSpec.stream().chatResponse();
 
                 StringBuilder fullResponse = new StringBuilder();
 
