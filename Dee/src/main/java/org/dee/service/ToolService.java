@@ -10,7 +10,7 @@ public interface ToolService {
      * 获取启用的工具并转换为 ToolCallback
      * @return ToolCallback 数组，可直接用于 ChatClient
      */
-    ToolCallback[] selectEnabledToolCallbacks();
+    List<ToolCallback> selectEnabledToolCallbacks();
     /**
      * 将已存在的工具加载到数据库中
      * @return 成功加载的工具数量

@@ -3,22 +3,17 @@ package org.dee.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.dee.dto.ChatMessageDTO;
 import org.dee.enums.PersistenceType;
-import org.dee.service.ChatRecordService;
-import org.dee.service.ChatSummaryService;
+import org.dee.service.ChatContextService;
 import org.dee.service.CacheChatService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +23,6 @@ import java.util.List;
  *  当不存在 用户自定义的 CacheChatService  时，使用此默认实现
  */
 @Slf4j
-//@Service
 @ConditionalOnMissingBean(CacheChatService.class)
 public class DefaultCacheChatServiceImpl implements CacheChatService {
 
@@ -38,21 +32,19 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
     private final ChatMemory chatMemory;
 
 
-    private final ChatRecordService chatRecordService;
+    private final ChatContextService chatContextService;
+    private final int MAX_MESSAGE_NUMS = 10; // 最大消息数
 
 
-    private final ChatSummaryService chatSummaryService;
-
-    public DefaultCacheChatServiceImpl(ChatRecordService recordService, ChatSummaryService summaryService) {
+    public DefaultCacheChatServiceImpl(ChatContextService contextService) {
 
         // 使用基于内存的聊天记录存储
         this.chatMemory = MessageWindowChatMemory.builder()
                 .chatMemoryRepository(new InMemoryChatMemoryRepository())
-                .maxMessages(10) // 最大消息数
+                .maxMessages(MAX_MESSAGE_NUMS)
                 .build();// 开启内存 信息存储功能
 
-        this.chatRecordService = recordService;
-        this.chatSummaryService = summaryService;
+        this.chatContextService = contextService;
     }
     @Override
     public boolean cacheChatMessage(String conversationId, String userMessage, String botResponse, long expireSeconds) {
@@ -105,16 +97,16 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
         List<ChatMessageDTO> chatMessageDTOList = convertMessage(messages);
 
         // 3. 批量保存聊天记录
-        chatRecordService.batchSaveChatRecords(conversationId, chatMessageDTOList,persistenceType.getCode());
+        chatContextService.batchSaveChatRecords(conversationId, chatMessageDTOList,persistenceType.getCode());
         log.info("批量保存聊天记录完成: conversationId={}, 总数={}, 类型={}",
                 conversationId, chatMessageDTOList.size(), typeDesc);
 
         // 4. 生成对话摘要
-        String summary = chatSummaryService.generateSummary(chatMessageDTOList);
+        String summary = chatContextService.generateSummary(chatMessageDTOList);
         String title = generateTitle(messages);
 
         // 5. 保存概要到数据库（包含持久化类型）
-        boolean summarySuccess = chatRecordService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
+        boolean summarySuccess = chatContextService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
         log.info("保存对话概要: conversationId={}, 成功={}, 类型={}", conversationId, summarySuccess, typeDesc);
 
         // 6. 清理 内存 中的聊天记录

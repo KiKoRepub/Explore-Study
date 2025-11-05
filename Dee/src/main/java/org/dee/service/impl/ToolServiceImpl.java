@@ -38,7 +38,7 @@ public class ToolServiceImpl implements ToolService {
     private ApplicationContext applicationContext;
 
     @Override
-    public ToolCallback[] selectEnabledToolCallbacks() {
+    public List<ToolCallback> selectEnabledToolCallbacks() {
 
 
         List<SQLTool> sqlTools = loadEnabledToolsFromDatabase();
@@ -61,8 +61,6 @@ public class ToolServiceImpl implements ToolService {
                 Object toolBean = entry.getValue();
                 Class<?> toolClass = toolBean.getClass();
 
-                // 获取 @MyTool 注解的值作为工具描述
-                MyTool myToolAnnotation = toolClass.getAnnotation(MyTool.class);
 
                 // 遍历类中的所有方法，查找带有 @Tool 注解的方法
                 for (Method method : toolClass.getDeclaredMethods()) {
@@ -194,9 +192,9 @@ public class ToolServiceImpl implements ToolService {
      * @param sqlTools 数据库中的工具列表
      * @return ToolCallback 数组，可直接用于 ChatClient
      */
-    private ToolCallback[] convertToToolCallbacks(List<SQLTool> sqlTools) {
+    private List<ToolCallback> convertToToolCallbacks(List<SQLTool> sqlTools) {
         if (sqlTools == null || sqlTools.isEmpty()) {
-            return new ToolCallback[0];
+            return new ArrayList<>();
         }
 
         List<ToolCallback> callbacks = new ArrayList<>();
@@ -235,7 +233,7 @@ public class ToolServiceImpl implements ToolService {
             }
         }
 
-        return callbacks.toArray(new ToolCallback[0]);
+        return callbacks;
     }
 
     @NotNull

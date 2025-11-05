@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dee.dto.ChatMessageDTO;
 import org.dee.dto.RedisChatMessageDTO;
 import org.dee.enums.PersistenceType;
-import org.dee.service.CacheChatService;
-import org.dee.service.ChatRecordService;
-import org.dee.service.ChatSummaryService;
-import org.dee.service.RedisService;
+import org.dee.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +21,7 @@ import java.util.List;
 public class RedisCacheChatService implements CacheChatService {
     
     @Autowired
-    private ChatRecordService chatRecordService;
-
-    @Autowired
-    private ChatSummaryService chatSummaryService;
+    private ChatContextService chatContextService;
 
     @Autowired
     private RedisService redisService;
@@ -86,7 +80,7 @@ public class RedisCacheChatService implements CacheChatService {
         List<ChatMessageDTO> chatMessageDTOList = convertMessage(messages);
 
         // 3. 批量保存聊天记录到数据库
-        boolean saveSuccess = chatRecordService.batchSaveChatRecords(conversationId, chatMessageDTOList, persistenceType.getCode());
+        boolean saveSuccess = chatContextService.batchSaveChatRecords(conversationId, chatMessageDTOList, persistenceType.getCode());
         
         if (saveSuccess) {
             log.info("✓ 批量保存聊天记录完成: conversationId={}, 总数={}, 类型={}", 
@@ -96,11 +90,11 @@ public class RedisCacheChatService implements CacheChatService {
         }
 
         // 4. 生成对话摘要
-        String summary = chatSummaryService.generateSummary(chatMessageDTOList);
+        String summary = chatContextService.generateSummary(chatMessageDTOList);
         String title = generateTitle(messages);
 
         // 5. 保存概要到数据库（包含持久化类型）
-        boolean summarySuccess = chatRecordService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
+        boolean summarySuccess = chatContextService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
         log.info("✓ 保存对话概要: conversationId={}, 成功={}, 标题={}, 类型={}", 
                 conversationId, summarySuccess, title, typeDesc);
 
