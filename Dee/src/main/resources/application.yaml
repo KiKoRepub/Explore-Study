@@ -24,3 +24,4 @@ spring:
       - classpath:config/zhi_pu.yml
       - classpath:config/dash_scope.yml
       - classpath:config/vector_store.yml
+      - classpath:config/mcp.yml

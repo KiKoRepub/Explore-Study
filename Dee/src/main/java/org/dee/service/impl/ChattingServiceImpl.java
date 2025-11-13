@@ -1,13 +1,13 @@
 package org.dee.service.impl;
 
+import io.milvus.param.R;
 import org.dee.dto.ChatMessageDTO;
 import org.dee.entity.ChatRecord;
 import org.dee.entity.ChatRecordZip;
 import org.dee.enums.PersistenceType;
-import org.dee.service.CacheChatService;
-import org.dee.service.ChatContextService;
-import org.dee.service.ChattingService;
-import org.dee.service.SSEService;
+import org.dee.service.*;
+import org.dee.utlis.ChatUtils;
+import org.dee.vo.ResultBean;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +27,17 @@ public class ChattingServiceImpl implements ChattingService {
     private ChatContextService chatContextService;
 
     @Autowired
-    SSEService sseService;
+    private SSEService sseService;
     @Autowired
-    private ToolServiceImpl toolService;
+    private ToolService toolService;
+    @Autowired
+    private MCPService mcpService;
 
 
     @Override
-    public String chatWithCache(String message, String conversationId, long expireSeconds) {
+    public ResultBean chatWithCache(String message, String conversationId, String userId, long expireSeconds) {
         // 加载上下文：获取历史对话记录和概要
-        String contextPrompt = buildContextPrompt(conversationId, message);
+        String contextPrompt = chatContextService.buildContextPrompt(conversationId, userId, message);
 
 
         ChatResponse response = chatClient.prompt()
@@ -45,20 +47,22 @@ public class ChattingServiceImpl implements ChattingService {
 
         String botResponse = response.getResult().getOutput().getText();
 
-        // 保存到 Redis，设置过期时间
-        cacheChatService.cacheChatMessage(conversationId, message, botResponse, expireSeconds);
+        String conversationKey = ChatUtils.buildConversationKey(conversationId, userId);
 
-        return botResponse;
+        // 保存到 Redis，设置过期时间
+        cacheChatService.cacheChatMessage(conversationKey, message, botResponse, expireSeconds);
+
+        return ResultBean.success(botResponse);
     }
     @Override
-    public Map<String, String> streamChatWithCache(String message, String conversationId, String userId, long expireSeconds) {
+    public ResultBean streamChatWithCache(String message, String conversationId, String userId, long expireSeconds) {
         return sseService.handleStreamChat(message, conversationId, userId,
-                buildContextPrompt(conversationId,message),
+                chatContextService.buildContextPrompt(conversationId, userId, message),
                 expireSeconds);
     }
     @Override
-    public String chatUsingTool(String message, String conversationId, long expireSeconds) {
-        String contextPrompt = buildContextPrompt(conversationId, message);
+    public ResultBean chatUsingTool(String message, String conversationId, String userId, long expireSeconds) {
+        String contextPrompt = chatContextService.buildContextPrompt(conversationId, userId, message);
 
         ChatResponse response = chatClient.prompt()
                 .user(contextPrompt)
@@ -66,68 +70,52 @@ public class ChattingServiceImpl implements ChattingService {
                 .call()
                 .chatResponse();
 
-        return response.getResult().getOutput().getText();
+        String botResponse = response.getResult().getOutput().getText();
+        
+        String conversationKey = ChatUtils.buildConversationKey(conversationId, userId);
+        cacheChatService.cacheChatMessage(conversationKey, message, botResponse, expireSeconds);
+
+        return ResultBean.success(botResponse);
     }
     @Override
-    public Map<String, String> streamChatUsingTool(String message, String conversationId, String userId, long expireSeconds) {
+    public ResultBean streamChatUsingTool(String message, String conversationId, String userId, long expireSeconds) {
         return sseService.handleStreamChatWithTools(message, conversationId, userId,
-                buildContextPrompt(conversationId,message),
+                chatContextService.buildContextPrompt(conversationId, userId, message),
                 expireSeconds);
     }
+
     @Override
-    public void persistChatMessages(String conversationId, PersistenceType type) {
-        cacheChatService.persistChatMessages(conversationId, type);
+    public ResultBean chatUsingMcpTool(String message, String conversationId, String userId,
+                                             long expireSeconds, List<String> mcpNames){
+        String contextPrompt = chatContextService.buildContextPrompt(conversationId, userId, message);
+
+        ChatResponse response = chatClient.prompt()
+                .user(contextPrompt)
+                .toolCallbacks(mcpService.getUserSelectedToolCallbacks(mcpNames))
+                .call()
+                .chatResponse();
+
+        String botResponse = response.getResult().getOutput().getText();
+
+        String conversationKey = ChatUtils.buildConversationKey(conversationId, userId);
+        cacheChatService.cacheChatMessage(conversationKey, message, botResponse, expireSeconds);
+
+        return ResultBean.success(botResponse);
+    }
+    @Override
+    public ResultBean streamChatUsingMcpTool(String message, String conversationId, String userId, long expireSeconds, List<String> mcpNames){
+        return sseService.handleStreamChatWithMcpTools(message, conversationId, userId,
+                chatContextService.buildContextPrompt(conversationId, userId, message),
+                expireSeconds, mcpNames);
+    }
+
+    @Override
+    public void persistChatMessages(String conversationId, String userId, PersistenceType type) {
+        cacheChatService.persistChatMessages(conversationId, userId, type);
     }
 
 
 
 
-    /**
-     * 构建包含上下文的提示词
-     *
-     * @param conversationId 对话ID
-     * @param currentMessage 当前用户消息
-     * @return 包含上下文的完整提示词
-     */
-    private String buildContextPrompt(String conversationId, String currentMessage) {
-        StringBuilder contextBuilder = new StringBuilder();
 
-        // 1. 加载概要记录（ChatRecordZip）- 从数据库
-        ChatRecordZip recordZip = chatContextService.getChatRecordZip(conversationId);
-        if (recordZip != null && recordZip.getCompressedData() != null && !recordZip.getCompressedData().isEmpty()) {
-            contextBuilder.append("[对话概要]\n");
-            contextBuilder.append(recordZip.getCompressedData());
-            contextBuilder.append("\n\n");
-        }
-
-        // 2. 优先从缓存加载历史对话记录
-        List<ChatMessageDTO> cachedMessages = cacheChatService.getCachedChatMessages(conversationId, org.dee.dto.ChatMessageDTO.class);
-
-        if (cachedMessages != null && !cachedMessages.isEmpty()) {
-            // 从缓存加载
-            contextBuilder.append("[最近对话]\n");
-            for (org.dee.dto.ChatMessageDTO msg : cachedMessages) {
-                contextBuilder.append("用户: ").append(msg.getUserMessage()).append("\n");
-                contextBuilder.append("助手: ").append(msg.getBotResponse()).append("\n");
-            }
-            contextBuilder.append("\n");
-        } else {
-            // 缓存为空，从数据库加载
-            List<ChatRecord> chatRecords = chatContextService.getChatRecords(conversationId);
-            if (chatRecords != null && !chatRecords.isEmpty()) {
-                contextBuilder.append("[历史对话]\n");
-                for (ChatRecord record : chatRecords) {
-                    contextBuilder.append("用户: ").append(record.getUserMessage()).append("\n");
-                    contextBuilder.append("助手: ").append(record.getBotResponse()).append("\n");
-                }
-                contextBuilder.append("\n");
-            }
-        }
-
-        // 3. 添加当前消息
-        contextBuilder.append("[当前问题]\n");
-        contextBuilder.append(currentMessage);
-
-        return contextBuilder.toString();
-    }
 }

@@ -59,7 +59,17 @@ public class ToolController {
     @ApiOperation(value = "获取启用的工具", notes = "从数据库查询所有启用状态的工具")
     public ResultBean<List<SQLTool>> getEnabledTools() {
         try {
-            List<SQLTool> tools = toolService.loadEnabledToolsFromDatabase();
+            List<SQLTool> tools = toolService.loadTotalEnabledToolsFromDatabase();
+            return ResultBean.success(tools);
+        } catch (Exception e) {
+            return ResultBean.error(ErrorCodeEnum.FAIL, "查询失败: " + e.getMessage());
+        }
+    }
+    @GetMapping("/enabled/{userId}")
+    @ApiOperation(value = "获取用户启用的工具", notes = "从数据库查询指定用户所有启用状态的工具")
+    public ResultBean<List<SQLTool>> getUserEnabledTools(@PathVariable String userId) {
+        try {
+            List<SQLTool> tools = toolService.loadEnabledToolsFromDatabase(userId);
             return ResultBean.success(tools);
         } catch (Exception e) {
             return ResultBean.error(ErrorCodeEnum.FAIL, "查询失败: " + e.getMessage());

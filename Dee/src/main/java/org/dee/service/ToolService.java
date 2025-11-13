@@ -2,6 +2,7 @@ package org.dee.service;
 
 import org.dee.entity.SQLTool;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
 
 import java.util.List;
 
@@ -27,7 +28,8 @@ public interface ToolService {
      * 从数据库加载启用的工具
      * @return 启用的工具列表
      */
-    List<SQLTool> loadEnabledToolsFromDatabase();
+    List<SQLTool> loadTotalEnabledToolsFromDatabase();
+    List<SQLTool> loadEnabledToolsFromDatabase(String userId);
     /**
      * 切换工具的启用状态
      * @param id 工具ID
@@ -41,5 +43,9 @@ public interface ToolService {
      * @return 是否成功
      */
     boolean deleteTool(Integer id);
+
+
+
+    boolean addMcpTool(ToolCallbackProvider provider,String serverName);
 
 }

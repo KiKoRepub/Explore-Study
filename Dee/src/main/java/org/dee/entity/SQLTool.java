@@ -26,7 +26,7 @@ public class SQLTool {
     private String description;
 
     @TableField("class_name")
-    @ApiModelProperty("工具类的完整类名")
+    @ApiModelProperty("工具类的完整类名(MCP对应 ServerName,USER 对应 用户id )")
     private String className;
 
 

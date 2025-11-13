@@ -17,7 +17,7 @@ public interface CacheChatService {
      * @param botResponse 机器人回复
      * @param expireSeconds 过期时间（秒）
      */
-    boolean cacheChatMessage(String conversationId, String userMessage, String botResponse,long expireSeconds);
+    boolean cacheChatMessage(String conversationKey, String userMessage, String botResponse,long expireSeconds);
 
     /**
      * 获取对话的所有消息
@@ -25,12 +25,13 @@ public interface CacheChatService {
      * @param clazz 消息类型
      * @return 消息列表
      */
-    <T> List<T> getCachedChatMessages(String conversationId,Class<T> clazz);
+    <T> List<T> getCachedChatMessages(String conversationKey,Class<T> clazz);
 
     /**
      * 批量持久化对话记录到数据库
      * @param conversationId 对话ID
+     * @param userId 用户ID
      * @param persistenceType 持久化类型（自动/手动）
      */
-    void persistChatMessages(String conversationId, PersistenceType persistenceType);
+    void persistChatMessages(String conversationId, String userId, PersistenceType persistenceType);
 }

@@ -1,4 +1,4 @@
-package org.dee.entity;
+package org.dee.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

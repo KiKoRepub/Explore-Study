@@ -17,6 +17,10 @@ public class ChatRecord {
     @ApiModelProperty("ID")
     private Integer id;
 
+    @TableField("user_id")
+    @ApiModelProperty("User ID")
+    private String userId;
+
     @TableField("conversation_id")
     @ApiModelProperty("Conversation ID")
     private String conversationId;

@@ -7,9 +7,12 @@ import org.dee.entity.ChatRecord;
 import org.dee.entity.ChatRecordZip;
 import org.dee.mapper.ChatRecordMapper;
 import org.dee.mapper.ChatRecordZipMapper;
+import org.dee.service.CacheChatService;
 import org.dee.service.ChatContextService;
+import org.dee.utlis.ChatUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,11 +30,27 @@ public class ChatContextServiceImpl implements ChatContextService {
     @Autowired
     private ChatRecordZipMapper chatRecordZipMapper;
 
-    @Override
+
+
+    private final CacheChatService cacheChatService;
+
+    public ChatContextServiceImpl(@Lazy CacheChatService cacheChatService) {
+        this.cacheChatService = cacheChatService;
+    }
+    private static final int MAX_CONTEXT_MESSAGES = 5; // 最大上下文消息数
+
     public List<ChatRecord> getChatRecords(String conversationId) {
         LambdaQueryWrapper<ChatRecord> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ChatRecord::getConversationId, conversationId)
                     .orderByAsc(ChatRecord::getCreatedAt);
+        return chatRecordMapper.selectList(queryWrapper);
+    }
+    @Override
+    public List<ChatRecord> getChatRecords(String conversationId, int limit) {
+        LambdaQueryWrapper<ChatRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ChatRecord::getConversationId, conversationId)
+                    .orderByAsc(ChatRecord::getCreatedAt)
+                    .last("LIMIT " + limit);
         return chatRecordMapper.selectList(queryWrapper);
     }
     @Override
@@ -45,11 +64,12 @@ public class ChatContextServiceImpl implements ChatContextService {
         return chatRecordMapper.insert(record) > 0;
     }
     @Override
-    public boolean batchSaveChatRecords(String conversationId, List<ChatMessageDTO> messageList, String persistentTypeCode){
+    public boolean batchSaveChatRecords(String conversationId,String userId, List<ChatMessageDTO> messageList, String persistentTypeCode){
         List<ChatRecord> recordList = new ArrayList<>();
         for (ChatMessageDTO message : messageList) {
             ChatRecord record = new ChatRecord();
             record.setConversationId(conversationId);
+            record.setUserId(userId);
             record.setUserMessage(message.getUserMessage());
             record.setBotResponse(message.getBotResponse());
 
@@ -71,7 +91,7 @@ public class ChatContextServiceImpl implements ChatContextService {
     }
 
     @Override
-    public boolean saveChatRecordZip(String conversationId, String title, String compressedData, String persistenceTypeCode) {
+    public boolean saveChatRecordZip(String conversationId, String userId, String title, String compressedData, String persistenceTypeCode) {
         // 检查是否已存在该对话的概要记录
         LambdaQueryWrapper<ChatRecordZip> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ChatRecordZip::getConversationId, conversationId);
@@ -82,6 +102,7 @@ public class ChatContextServiceImpl implements ChatContextService {
 
         if (existingRecord != null) {
             // 更新已存在的记录
+            existingRecord.setUserId(userId);
             existingRecord.setTitle(title);
             existingRecord.setCompressedData(compressedData);
             existingRecord.setPersistenceTypeCode(persistenceTypeCode);
@@ -91,6 +112,7 @@ public class ChatContextServiceImpl implements ChatContextService {
             // 插入新记录
             ChatRecordZip newRecord = new ChatRecordZip();
             newRecord.setConversationId(conversationId);
+            newRecord.setUserId(userId);
             newRecord.setTitle(title);
             newRecord.setCompressedData(compressedData);
             newRecord.setPersistenceTypeCode(persistenceTypeCode);
@@ -135,7 +157,56 @@ public class ChatContextServiceImpl implements ChatContextService {
             return generateSimpleSummary(messages);
         }
     }
+    /**
+     * 构建包含上下文的提示词
+     *
+     * @param conversationId 对话ID
+     * @param currentMessage 当前用户消息
+     * @return 包含上下文的完整提示词
+     */
+    @Override
+    public String buildContextPrompt(String conversationId,String userId,String currentMessage) {
+        StringBuilder contextBuilder = new StringBuilder();
 
+        // 1. 加载概要记录（ChatRecordZip）- 从数据库
+        ChatRecordZip recordZip = getChatRecordZip(conversationId);
+        if (recordZip != null && recordZip.getCompressedData() != null && !recordZip.getCompressedData().isEmpty()) {
+            contextBuilder.append("[对话概要]\n");
+            contextBuilder.append(recordZip.getCompressedData());
+            contextBuilder.append("\n\n");
+        }
+
+        // 2. 优先从缓存加载历史对话记录
+        String conversationKey = ChatUtils.buildConversationKey(conversationId,userId);
+        List<ChatMessageDTO> cachedMessages = cacheChatService.getCachedChatMessages(conversationKey, org.dee.dto.ChatMessageDTO.class);
+
+        if (cachedMessages != null && !cachedMessages.isEmpty()) {
+            // 从缓存加载
+            contextBuilder.append("[最近对话]\n");
+            for (org.dee.dto.ChatMessageDTO msg : cachedMessages) {
+                contextBuilder.append("用户: ").append(msg.getUserMessage()).append("\n");
+                contextBuilder.append("助手: ").append(msg.getBotResponse()).append("\n");
+            }
+            contextBuilder.append("\n");
+        } else {
+            // 缓存为空，从数据库加载
+            List<ChatRecord> chatRecords = getChatRecords(conversationId,MAX_CONTEXT_MESSAGES);
+            if (chatRecords != null && !chatRecords.isEmpty()) {
+                contextBuilder.append("[历史对话]\n");
+                for (ChatRecord record : chatRecords) {
+                    contextBuilder.append("用户: ").append(record.getUserMessage()).append("\n");
+                    contextBuilder.append("助手: ").append(record.getBotResponse()).append("\n");
+                }
+                contextBuilder.append("\n");
+            }
+        }
+
+        // 3. 添加当前消息
+        contextBuilder.append("[当前问题]\n");
+        contextBuilder.append(currentMessage);
+
+        return contextBuilder.toString();
+    }
     /**
      * 生成简单摘要（备用方案）
      */

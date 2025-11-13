@@ -26,19 +26,19 @@ public class RedisCacheChatService implements CacheChatService {
     @Autowired
     private RedisService redisService;
     @Override
-    public boolean cacheChatMessage(String conversationId, String userMessage, String botResponse, long expireSeconds) {
+    public boolean cacheChatMessage(String conversationKey, String userMessage, String botResponse, long expireSeconds) {
         RedisChatMessageDTO redisMessageDTO = new RedisChatMessageDTO(userMessage, botResponse);
 
         // 1. 保存聊天消息到 Redis（使用线程安全的 RedisService）
-        boolean saved = redisService.pushCacheRecordList(conversationId,
+        boolean saved = redisService.pushCacheRecordList(conversationKey,
                 Collections.singletonList(redisMessageDTO),
                 expireSeconds);
 
         if (saved) {
             // 2. 设置过期标记键，用于触发自动持久化
             // 当这个键过期时，会触发 Redis 键过期事件，监听器会自动执行持久化
-            redisService.setExpireMarker(conversationId,expireSeconds);
-            log.info("✓ 聊天消息已缓存，将在 {} 秒后自动持久化: conversationId={}", expireSeconds, conversationId);
+            redisService.setExpireMarker(conversationKey,expireSeconds);
+            log.info("✓ 聊天消息已缓存，将在 {} 秒后自动持久化: conversationId={}", expireSeconds, conversationKey);
         }
 
         return saved;
@@ -64,9 +64,9 @@ public class RedisCacheChatService implements CacheChatService {
     }
 
     @Override
-    public void persistChatMessages(String conversationId, PersistenceType persistenceType) {
+    public void persistChatMessages(String conversationId, String userId, PersistenceType persistenceType) {
         String typeDesc = persistenceType.getDescription();
-        log.info("📦 开始持久化对话记录: conversationId={}, 类型={}", conversationId, typeDesc);
+        log.info("📦 开始持久化对话记录: conversationId={}, userId={}, 类型={}", conversationId, userId, typeDesc);
 
         // 1. 获取 Redis 中的所有消息
         List<RedisChatMessageDTO> messages = getChatMessages(conversationId);
@@ -80,13 +80,13 @@ public class RedisCacheChatService implements CacheChatService {
         List<ChatMessageDTO> chatMessageDTOList = convertMessage(messages);
 
         // 3. 批量保存聊天记录到数据库
-        boolean saveSuccess = chatContextService.batchSaveChatRecords(conversationId, chatMessageDTOList, persistenceType.getCode());
+        boolean saveSuccess = chatContextService.batchSaveChatRecords(conversationId, userId, chatMessageDTOList, persistenceType.getCode());
         
         if (saveSuccess) {
-            log.info("✓ 批量保存聊天记录完成: conversationId={}, 总数={}, 类型={}", 
-                    conversationId, chatMessageDTOList.size(), typeDesc);
+            log.info("✓ 批量保存聊天记录完成: conversationId={}, userId={}, 总数={}, 类型={}", 
+                    conversationId, userId, chatMessageDTOList.size(), typeDesc);
         } else {
-            log.error("❌ 批量保存聊天记录失败: conversationId={}", conversationId);
+            log.error("❌ 批量保存聊天记录失败: conversationId={}, userId={}", conversationId, userId);
         }
 
         // 4. 生成对话摘要
@@ -94,9 +94,9 @@ public class RedisCacheChatService implements CacheChatService {
         String title = generateTitle(messages);
 
         // 5. 保存概要到数据库（包含持久化类型）
-        boolean summarySuccess = chatContextService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
-        log.info("✓ 保存对话概要: conversationId={}, 成功={}, 标题={}, 类型={}", 
-                conversationId, summarySuccess, title, typeDesc);
+        boolean summarySuccess = chatContextService.saveChatRecordZip(conversationId, userId, title, summary, persistenceType.getCode());
+        log.info("✓ 保存对话概要: conversationId={}, userId={}, 成功={}, 标题={}, 类型={}", 
+                conversationId, userId, summarySuccess, title, typeDesc);
 
         // 6. 清理 Redis 中的聊天记录
         redisService.removeAIRecordCache(conversationId);
@@ -106,7 +106,7 @@ public class RedisCacheChatService implements CacheChatService {
         redisService.removeExpireMarker(conversationId);
         log.info("✓ 清理过期标记: conversationId={}", conversationId);
         
-        log.info("🎉 持久化完成: conversationId={}, 类型={}", conversationId, typeDesc);
+        log.info("🎉 持久化完成: conversationId={}, userId={}, 类型={}", conversationId, userId, typeDesc);
     }
 
 

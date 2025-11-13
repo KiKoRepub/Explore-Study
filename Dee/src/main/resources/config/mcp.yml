@@ -1,0 +1,20 @@
+spring:
+  ai:
+    mcp:
+      client:
+        toolcallback:
+          enabled: true
+        name: mcp-client
+        sse:
+          connections:
+            server1:
+              url: http://localhost:8085
+              sse-endpoint: /mcp/book
+            server2:
+              url: https://mcp.amap.com
+              sse-endpoint: /sse?key=${AMAP_API_KEY}
+#        stdio:
+#          servers-configuration: classpath:mcp/mcp-stdio-servers.json
+        enabled: true
+        type: sync
+        request-timeout: 60000

@@ -184,7 +184,7 @@ http://localhost:8080/swagger-ui.html
 ## 🎯 下一步
 
 - 查看完整文档：`docs/TOOL_MANAGEMENT.md`
-- 了解工具使用场景
+- 了解工具使用场景        
 - 创建更多自定义工具
 - 集成到聊天系统中
 

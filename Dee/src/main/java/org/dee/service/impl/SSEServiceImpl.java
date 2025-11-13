@@ -1,11 +1,12 @@
 package org.dee.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dee.service.CacheChatService;
-import org.dee.service.ChatContextService;
-import org.dee.service.SSEService;
-import org.dee.service.ToolService;
+import org.dee.enums.ErrorCodeEnum;
+import org.dee.service.*;
 import org.dee.sse.SSEServer;
+import org.dee.utlis.ChatUtils;
+import org.dee.vo.ResultBean;
+import org.dee.vo.SSEMessageVo;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +37,11 @@ public class SSEServiceImpl implements SSEService {
 
     @Autowired
     private ToolService toolService;
+    @Autowired
+    private MCPService mcpService;
 
     @Override
-    public Map<String, String> handleStreamChat(String message, String conversationId, String userId,String contextPrompt, long expireSeconds) {
+    public ResultBean handleStreamChat(String message, String conversationId, String userId,String contextPrompt, long expireSeconds) {
         log.info("开始流式对话: conversationId={}, userId={}", conversationId, userId);
 
         // 检查SSE连接是否存在
@@ -54,7 +58,7 @@ public class SSEServiceImpl implements SSEService {
     }
 
     @Override
-    public Map<String, String> handleStreamChatWithTools(String message, String conversationId, String userId,String contextPrompt, long expireSeconds) {
+    public ResultBean handleStreamChatWithTools(String message, String conversationId, String userId,String contextPrompt, long expireSeconds) {
         log.info("开始工具流式对话: conversationId={}, userId={}", conversationId, userId);
 
         // 检查SSE连接是否存在
@@ -73,11 +77,22 @@ public class SSEServiceImpl implements SSEService {
         return createProcessingResult(conversationId);
     }
 
+    @Override
+    public ResultBean handleStreamChatWithMcpTools(String message, String conversationId, String userId,
+                                                   String contextPrompt, long expireSeconds, List<String> mcpNames) {
+        List<ToolCallback> mcpCallbackList = mcpService.getUserSelectedToolCallbacks(mcpNames);
+
+        processStreamChatAsync(contextPrompt,message, conversationId, userId, expireSeconds, mcpCallbackList);
+
+        return createProcessingResult(conversationId);
+    }
+
     /**
      * 异步处理流式对话
      */
     private void processStreamChatAsync(String contextPrompt,String message, String conversationId, String userId,
                                        long expireSeconds, List<ToolCallback> toolCallbacks) {
+        String conversationKey = ChatUtils.buildConversationKey(conversationId,userId);
         new Thread(() -> {
             try {
 
@@ -110,7 +125,7 @@ public class SSEServiceImpl implements SSEService {
                         () -> {
                             // 完成后保存到缓存
                             String botResponse = fullResponse.toString();
-                            cacheChatService.cacheChatMessage(conversationId, message, botResponse, expireSeconds);
+                            cacheChatService.cacheChatMessage(conversationKey, message, botResponse, expireSeconds);
 
                             // 发送完成信号
                             sendCompleteMessage(userId, conversationId, botResponse);
@@ -123,51 +138,6 @@ public class SSEServiceImpl implements SSEService {
                 sendErrorMessage(userId, conversationId, e.getMessage());
             }
         }).start();
-    }
-
-    /**
-     * 构建包含上下文的提示词
-     */
-    private String buildContextPrompt(String conversationId, String currentMessage) {
-        StringBuilder contextBuilder = new StringBuilder();
-
-        // 1. 加载概要记录（ChatRecordZip）- 从数据库
-        var recordZip = chatContextService.getChatRecordZip(conversationId);
-        if (recordZip != null && recordZip.getCompressedData() != null && !recordZip.getCompressedData().isEmpty()) {
-            contextBuilder.append("[对话概要]\n");
-            contextBuilder.append(recordZip.getCompressedData());
-            contextBuilder.append("\n\n");
-        }
-
-        // 2. 优先从缓存加载历史对话记录
-        var cachedMessages = cacheChatService.getCachedChatMessages(conversationId, org.dee.dto.ChatMessageDTO.class);
-
-        if (cachedMessages != null && !cachedMessages.isEmpty()) {
-            // 从缓存加载
-            contextBuilder.append("[最近对话]\n");
-            for (org.dee.dto.ChatMessageDTO msg : cachedMessages) {
-                contextBuilder.append("用户: ").append(msg.getUserMessage()).append("\n");
-                contextBuilder.append("助手: ").append(msg.getBotResponse()).append("\n");
-            }
-            contextBuilder.append("\n");
-        } else {
-            // 缓存为空，从数据库加载
-            var chatRecords = chatContextService.getChatRecords(conversationId);
-            if (chatRecords != null && !chatRecords.isEmpty()) {
-                contextBuilder.append("[历史对话]\n");
-                for (var record : chatRecords) {
-                    contextBuilder.append("用户: ").append(record.getUserMessage()).append("\n");
-                    contextBuilder.append("助手: ").append(record.getBotResponse()).append("\n");
-                }
-                contextBuilder.append("\n");
-            }
-        }
-
-        // 3. 添加当前消息
-        contextBuilder.append("[当前问题]\n");
-        contextBuilder.append(currentMessage);
-
-        return contextBuilder.toString();
     }
 
     /**
@@ -191,39 +161,48 @@ public class SSEServiceImpl implements SSEService {
         errorData.put("message", errorMessage);
         errorData.put("conversationId", conversationId);
         errorData.put("timestamp", System.currentTimeMillis());
-        SSEServer.sendMessage(userId, "error", errorData);
+        SSEServer.sendMessage(userId, "error", new SSEMessageVo(
+                userId,
+                conversationId,
+                "error",
+                errorMessage,
+                LocalDateTime.now()
+        ));
     }
 
     /**
      * 发送完成消息
      */
     private void sendCompleteMessage(String userId, String conversationId, String fullResponse) {
-        Map<String, Object> completeData = new HashMap<>();
-        completeData.put("type", "complete");
-        completeData.put("conversationId", conversationId);
-        completeData.put("fullResponse", fullResponse);
-        completeData.put("timestamp", System.currentTimeMillis());
-        SSEServer.sendMessage(userId, "complete", completeData);
+
+        SSEServer.sendMessage(userId, "complete",
+                new SSEMessageVo(userId,
+                    conversationId,
+                        "complete",
+                        fullResponse,
+                        LocalDateTime.now())
+        );
     }
 
     /**
      * 创建错误结果
      */
-    private Map<String, String> createErrorResult(String error, String conversationId) {
+    private ResultBean createErrorResult(String error, String conversationId) {
         Map<String, String> result = new HashMap<>();
-        result.put("error", error);
+        result.put("status", "error");
         result.put("conversationId", conversationId);
-        return result;
+        result.put("message", error);
+        return ResultBean.error(ErrorCodeEnum.SERVICE_ERROR,error,result);
     }
 
     /**
      * 创建处理中结果
      */
-    private Map<String, String> createProcessingResult(String conversationId) {
+    private ResultBean createProcessingResult(String conversationId) {
         Map<String, String> result = new HashMap<>();
         result.put("status", "processing");
         result.put("conversationId", conversationId);
         result.put("message", "对话处理中，请通过SSE接收响应");
-        return result;
+        return ResultBean.success(result);
     }
 }

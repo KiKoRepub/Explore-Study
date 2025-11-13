@@ -1,9 +1,8 @@
 package org.dee.tools;
 
 import org.dee.annotions.MyTool;
-import org.dee.entity.ImageGenerateResult;
+import org.dee.vo.ImageGenerateResult;
 import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @MyTool("图像处理工具")
 public class ImageTool {

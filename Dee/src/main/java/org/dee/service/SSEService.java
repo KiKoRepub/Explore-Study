@@ -1,5 +1,8 @@
 package org.dee.service;
 
+import org.dee.vo.ResultBean;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,7 +19,7 @@ public interface SSEService {
      * @param expireSeconds 缓存过期时间
      * @return 处理结果
      */
-    Map<String, String> handleStreamChat(String message, String conversationId, String userId,String contextPrompt, long expireSeconds);
+    ResultBean handleStreamChat(String message, String conversationId, String userId, String contextPrompt, long expireSeconds);
 
     /**
      * 处理流式对话（带工具）
@@ -27,5 +30,7 @@ public interface SSEService {
      * @param expireSeconds 缓存过期时间
      * @return 处理结果
      */
-    Map<String, String> handleStreamChatWithTools(String message, String conversationId, String userId,String contextPrompt, long expireSeconds);
+    ResultBean handleStreamChatWithTools(String message, String conversationId, String userId,String contextPrompt, long expireSeconds);
+
+    ResultBean handleStreamChatWithMcpTools(String message, String conversationId, String userId, String buildContextPrompt, long expireSeconds, List<String> mcpNames);
 }

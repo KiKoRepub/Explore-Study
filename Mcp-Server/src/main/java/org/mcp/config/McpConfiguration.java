@@ -11,7 +11,7 @@ public class McpConfiguration {
 
 
     @Bean
-    public ToolCallbackProvider weatherTools(BookTools bookTools) {
+    public ToolCallbackProvider bookTools(BookTools bookTools) {
         return MethodToolCallbackProvider.builder()
                 .toolObjects(bookTools)
                 .build();

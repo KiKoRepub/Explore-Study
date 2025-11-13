@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
  * 如果使用 DefaultCacheChatServiceImpl（内存缓存），此监听器不会被创建
  * 
  * 工作原理：
- * 1. 当聊天记录的过期标记键（chat:expire:{conversationId}）过期时
+ * 1. 当聊天记录的过期标记键（chat:expire:{userId}:{conversationId}）过期时
  * 2. Redis 发送键过期事件
- * 3. 监听器捕获事件并提取 conversationId
+ * 3. 监听器捕获事件并提取 userId 和 conversationId
  * 4. 异步执行持久化操作
  */
 @Slf4j
@@ -32,7 +32,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
 
     /**
      * 聊天记录过期键前缀
-     * 格式: chat:expire:{conversationId}
+     * 格式: chat:expire:{userId}:{conversationId}
      */
     private static final String CHAT_EXPIRE_KEY_PREFIX = "chat:expire:";
 
@@ -59,15 +59,25 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
 
         // 只处理聊天过期键
         if (expiredKey.startsWith(CHAT_EXPIRE_KEY_PREFIX)) {
-            String conversationId = expiredKey.substring(CHAT_EXPIRE_KEY_PREFIX.length());
-            log.info("⚡ 触发自动持久化: conversationId={}", conversationId);
+            String conversationKey = expiredKey.substring(CHAT_EXPIRE_KEY_PREFIX.length());
+            log.info("⚡ 触发自动持久化: conversationKey={}", conversationKey);
 
             try {
-                // 执行自动持久化操作（传入 AUTO 类型）
-                cacheChatService.persistChatMessages(conversationId, PersistenceType.AUTO);
-                log.info("✓ 自动持久化成功: conversationId={}", conversationId);
+                // 从 conversationKey 中提取 conversationId 和 userId
+                // conversationKey 格式: userId:conversationId
+                String[] parts = conversationKey.split(":");
+                if (parts.length >= 2) {
+                    String userId = parts[0];
+                    String conversationId = parts[1];
+                    
+                    // 执行自动持久化操作（传入 AUTO 类型）
+                    cacheChatService.persistChatMessages(conversationId, userId, PersistenceType.AUTO);
+                    log.info("✓ 自动持久化成功: conversationId={}, userId={}", conversationId, userId);
+                } else {
+                    log.warn("⚠️ conversationKey 格式错误: {}", conversationKey);
+                }
             } catch (Exception e) {
-                log.error("❌ 自动持久化失败: conversationId={}", conversationId, e);
+                log.error("❌ 自动持久化失败: conversationKey={}", conversationKey, e);
                 // 可以在这里添加重试逻辑或告警
             }
         }

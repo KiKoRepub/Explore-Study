@@ -30,6 +30,9 @@ public class ResultBean<T> {
         return new ResultBean<>(codeEnum.getCode(), message, null);
     }
 
+    public static <T> ResultBean<T> error(ErrorCodeEnum codeEnum,String message,T data) {
+        return new ResultBean<>(codeEnum.getCode(), message, null);
+    }
 
     public ResultBean(int code, String message, T data) {
         this.code = code;

@@ -1,16 +1,20 @@
 package org.dee.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.dee.annotions.MyTool;
+import org.dee.callBack.MyMcpToolCallBackProvider;
 import org.dee.dto.ToolInputDTO;
 import org.dee.entity.SQLTool;
+import org.dee.enums.ToolTypeEnum;
 import org.dee.mapper.ToolMapper;
 import org.dee.service.ToolService;
 import org.dee.utlis.ToolUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.function.FunctionToolCallback;
@@ -41,7 +45,7 @@ public class ToolServiceImpl implements ToolService {
     public List<ToolCallback> selectEnabledToolCallbacks() {
 
 
-        List<SQLTool> sqlTools = loadEnabledToolsFromDatabase();
+        List<SQLTool> sqlTools = loadTotalEnabledToolsFromDatabase();
 
 
         return convertToToolCallbacks(sqlTools);
@@ -77,7 +81,7 @@ public class ToolServiceImpl implements ToolService {
                         tool.setInputSchema(ToolUtils.buildInputSchema(method));
 
                         tool.setEnabled(1); // 默认启用
-                        tool.setCategory(extractCategory(toolClass.getName()));
+                        tool.setCategory(ToolTypeEnum.STANDARD.value);
                         tool.setCreatedAt(now);
                         tool.setUpdatedAt(now);
 
@@ -103,9 +107,24 @@ public class ToolServiceImpl implements ToolService {
     }
 
     @Override
-    public List<SQLTool> loadEnabledToolsFromDatabase() {
-        // 查询所有启用的工具
+    public List<SQLTool> loadTotalEnabledToolsFromDatabase() {
+
         return toolMapper.selectEnabledTools();
+    }
+
+    @Override
+    public List<SQLTool> loadEnabledToolsFromDatabase(String userId) {
+        // 查询所有启用的工具
+        // 仅包括 非 MCP 工具
+        LambdaQueryWrapper<SQLTool> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SQLTool::getEnabled, 1)
+                .eq(SQLTool::getCategory, ToolTypeEnum.STANDARD.value)
+                .or()
+                .eq(SQLTool::getCategory, ToolTypeEnum.USER.value)
+                .eq(SQLTool::getEnabled, 1)
+                .eq(SQLTool::getClassName,userId);
+
+        return toolMapper.selectList(wrapper);
     }
 
     
@@ -126,6 +145,40 @@ public class ToolServiceImpl implements ToolService {
         return toolMapper.deleteById(id) > 0;
     }
 
+    @Override
+    public boolean addMcpTool(ToolCallbackProvider provider,String serverName) {
+        // MCP工具添加逻辑
+        ToolCallback[] toolCallbacks = provider.getToolCallbacks();
+
+        List<SQLTool> mcpToolList = new ArrayList<>();
+        for (ToolCallback toolCallback : toolCallbacks) {
+            SQLTool tool = new SQLTool();
+            ToolDefinition toolDefinition = toolCallback.getToolDefinition();
+
+            tool.setToolName(toolDefinition.name());
+            tool.setDescription(toolDefinition.description());
+            tool.setInputSchema(toolDefinition.inputSchema());
+
+
+            tool.setCreatedAt(LocalDateTime.now());
+            tool.setUpdatedAt(LocalDateTime.now());
+            tool.setEnabled(1);
+
+            tool.setClassName(serverName);
+            tool.setCategory(ToolTypeEnum.MCP.value);
+
+            mcpToolList.add(tool);
+
+
+        }
+
+        if (!mcpToolList.isEmpty()) {
+            int inserted = toolMapper.batchInsert(mcpToolList);
+            return inserted > 0;
+        }
+
+        return false;
+    }
 
     /**
      * 从类名中提取分类

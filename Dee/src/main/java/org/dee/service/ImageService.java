@@ -1,6 +1,6 @@
 package org.dee.service;
 
-import org.dee.entity.ImageGenerateResult;
+import org.dee.vo.ImageGenerateResult;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {

@@ -47,7 +47,7 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
         this.chatContextService = contextService;
     }
     @Override
-    public boolean cacheChatMessage(String conversationId, String userMessage, String botResponse, long expireSeconds) {
+    public boolean cacheChatMessage(String conversationKey, String userMessage, String botResponse, long expireSeconds) {
         try {
             Message userMsg = UserMessage.builder()
                     .text(userMessage)
@@ -56,34 +56,34 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
                     botResponse
             );
 
-            chatMemory.add(conversationId, userMsg);
-            chatMemory.add(conversationId, botMsg);
+            chatMemory.add(conversationKey, userMsg);
+            chatMemory.add(conversationKey, botMsg);
 
-            log.info("保存聊天消息到 内存: conversationId={}, 过期时间={}秒", conversationId, expireSeconds);
+            log.info("保存聊天消息到 内存: conversationId={}, 过期时间={}秒", conversationKey, expireSeconds);
             return true;
         }catch (Exception e){
-            log.error("保存聊天消息到 内存 失败: conversationId={}, 错误={}", conversationId, e.getMessage());
+            log.error("保存聊天消息到 内存 失败: conversationId={}, 错误={}", conversationKey, e.getMessage());
             return false;
         }
     }
 
 
     @Override
-    public  <T> List<T> getCachedChatMessages(String conversationId,Class<T> clazz) {
+    public  <T> List<T> getCachedChatMessages(String conversationKey,Class<T> clazz) {
         try {
-            List<Message> messages = chatMemory.get(conversationId);
+            List<Message> messages = chatMemory.get(conversationKey);
 
             return (List<T>) convertMessage(messages);
         }catch (Exception e){
-            log.error("获取缓存聊天消息失败: conversationId={}, 错误={}", conversationId, e.getMessage());
+            log.error("获取缓存聊天消息失败: conversationKey={}, 错误={}", conversationKey, e.getMessage());
             return new ArrayList<>();
         }
     }
 
     @Override
-    public void persistChatMessages(String conversationId, PersistenceType persistenceType) {
+    public void persistChatMessages(String conversationId, String userId, PersistenceType persistenceType) {
         String typeDesc = persistenceType.getDescription();
-        log.info("开始持久化对话记录: conversationId={}, 类型={}", conversationId, typeDesc);
+        log.info("开始持久化对话记录: conversationId={}, userId={}, 类型={}", conversationId, userId, typeDesc);
 
         // 1. 获取 内存 中的所有消息
         List<Message> messages = getChatMessages(conversationId);
@@ -97,17 +97,17 @@ public class DefaultCacheChatServiceImpl implements CacheChatService {
         List<ChatMessageDTO> chatMessageDTOList = convertMessage(messages);
 
         // 3. 批量保存聊天记录
-        chatContextService.batchSaveChatRecords(conversationId, chatMessageDTOList,persistenceType.getCode());
-        log.info("批量保存聊天记录完成: conversationId={}, 总数={}, 类型={}",
-                conversationId, chatMessageDTOList.size(), typeDesc);
+        chatContextService.batchSaveChatRecords(conversationId, userId, chatMessageDTOList, persistenceType.getCode());
+        log.info("批量保存聊天记录完成: conversationId={}, userId={}, 总数={}, 类型={}",
+                conversationId, userId, chatMessageDTOList.size(), typeDesc);
 
         // 4. 生成对话摘要
         String summary = chatContextService.generateSummary(chatMessageDTOList);
         String title = generateTitle(messages);
 
         // 5. 保存概要到数据库（包含持久化类型）
-        boolean summarySuccess = chatContextService.saveChatRecordZip(conversationId, title, summary, persistenceType.getCode());
-        log.info("保存对话概要: conversationId={}, 成功={}, 类型={}", conversationId, summarySuccess, typeDesc);
+        boolean summarySuccess = chatContextService.saveChatRecordZip(conversationId, userId, title, summary, persistenceType.getCode());
+        log.info("保存对话概要: conversationId={}, userId={}, 成功={}, 类型={}", conversationId, userId, summarySuccess, typeDesc);
 
         // 6. 清理 内存 中的聊天记录
         chatMemory.clear(conversationId);
