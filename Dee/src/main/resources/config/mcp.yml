@@ -2,19 +2,27 @@ spring:
   ai:
     mcp:
       client:
+        enabled: true
+        name: dee-mcp-client
         toolcallback:
           enabled: true
-        name: mcp-client
         sse:
           connections:
-            server1:
+            bookServer:
               url: http://localhost:8085
-              sse-endpoint: /mcp/book
-            server2:
+              sse-endpoint: /sse
+            # 如果需要高德地图，确保配置了 AMAP_API_KEY 环境变量
+            amapServer:
               url: https://mcp.amap.com
               sse-endpoint: /sse?key=${AMAP_API_KEY}
+
 #        stdio:
 #          servers-configuration: classpath:mcp/mcp-stdio-servers.json
-        enabled: true
-        type: sync
         request-timeout: 60000
+        type: async
+
+# 添加调试日志
+logging:
+  level:
+    org.springframework.ai.mcp: DEBUG
+    io.modelcontextprotocol: DEBUG

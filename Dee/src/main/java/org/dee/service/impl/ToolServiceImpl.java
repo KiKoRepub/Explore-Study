@@ -116,13 +116,25 @@ public class ToolServiceImpl implements ToolService {
     public List<SQLTool> loadEnabledToolsFromDatabase(String userId) {
         // 查询所有启用的工具
         // 仅包括 非 MCP 工具
+        /*
+        SELECT * FROM sql_tool
+        WHERE enabled = 1
+          AND (category = 'STANDARD'
+              OR (
+                  category = 'USER'
+                 AND
+                  class_name = #{userId}
+              )
+          );
+         */
         LambdaQueryWrapper<SQLTool> wrapper = new LambdaQueryWrapper<>();
+
         wrapper.eq(SQLTool::getEnabled, 1)
-                .eq(SQLTool::getCategory, ToolTypeEnum.STANDARD.value)
-                .or()
-                .eq(SQLTool::getCategory, ToolTypeEnum.USER.value)
-                .eq(SQLTool::getEnabled, 1)
-                .eq(SQLTool::getClassName,userId);
+                .and(wrapper1 -> wrapper1
+                        .eq(SQLTool::getCategory, ToolTypeEnum.STANDARD.value)
+                        .or(wrapper2 -> wrapper2
+                                .eq(SQLTool::getCategory, ToolTypeEnum.USER.value)
+                                .eq(SQLTool::getClassName, userId)));
 
         return toolMapper.selectList(wrapper);
     }
@@ -180,23 +192,6 @@ public class ToolServiceImpl implements ToolService {
         return false;
     }
 
-    /**
-     * 从类名中提取分类
-     * @param className 完整类名
-     * @return 分类名称
-     */
-    private String extractCategory(String className) {
-        String[] parts = className.split("\\.");
-        if (parts.length > 0) {
-            String simpleName = parts[parts.length - 1];
-            // 移除 "Tool" 后缀
-            if (simpleName.endsWith("Tool")) {
-                return simpleName.substring(0, simpleName.length() - 4);
-            }
-            return simpleName;
-        }
-        return "Unknown";
-    }
     private static MethodToolCallback buildMethodToolCallback(SQLTool sqlTool, Method method,Object toolInstance) {
 
         ToolDefinition definition = ToolDefinition.builder()

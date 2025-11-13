@@ -2,9 +2,15 @@ package org.mcp.config;
 
 import org.mcp.tool.BookTools;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class McpConfiguration {
@@ -16,5 +22,6 @@ public class McpConfiguration {
                 .toolObjects(bookTools)
                 .build();
     }
+
 
 }

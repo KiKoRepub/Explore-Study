@@ -64,4 +64,18 @@ public class SQLMcpServer {
      */
     private LocalDateTime updateTime;
 
+
+    /*
+    CREATE TABLE sql_mcp_server (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        server_name VARCHAR(255) NOT NULL,
+        server_url VARCHAR(512) NOT NULL,
+        description VARCHAR(1024),
+        endpoint VARCHAR(255),
+        type VARCHAR(50) NOT NULL,
+        json_content TEXT,
+        enabled BOOLEAN DEFAULT TRUE,
+        create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+        update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+     */
 }

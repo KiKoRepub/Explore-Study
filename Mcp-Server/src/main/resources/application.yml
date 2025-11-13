@@ -1,5 +1,6 @@
 server:
   port: 8085
+
 spring:
   application:
     name: mcp-server
@@ -7,14 +8,19 @@ spring:
     mcp:
       server:
         type: ASYNC
-        name: mcp-server
-#        stdio: true
+        name: book-mcp-server
         version: "1.0.0"
-#        base-url: http://localhost:8085
+        base-url: http://localhost:8085
         enabled: true
-        sse-message-endpoint: /mcp/book
-#        capabilities:
-#          tool: true
-#          resource: true
-#          prompt: true
-#          completion: true
+        sse-message-endpoint: /sse
+        capabilities:
+          tool: true
+          resource: false
+          prompt: false
+          completion: false
+
+# 添加调试日志
+logging:
+  level:
+    org.springframework.ai.mcp: DEBUG
+    org.mcp: DEBUG
