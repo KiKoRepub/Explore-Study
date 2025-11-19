@@ -1,10 +1,9 @@
 package org.dee.service;
 
 import org.dee.enums.PersistenceType;
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.ResultBean;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ChattingService {
     ResultBean chatWithCache(String message, String conversationId, String userId, long expireSeconds);

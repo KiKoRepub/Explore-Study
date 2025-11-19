@@ -1,6 +1,6 @@
 package org.dee.service;
 
-import org.dee.dto.RedisChatMessageDTO;
+import org.dee.entity.dto.RedisChatMessageDTO;
 import org.dee.entity.ChatRecord;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package org.dee.service;
 
 import org.dee.entity.SQLMcpServer;
-import org.dee.vo.McpServerVo;
+import org.dee.entity.vo.McpServerVo;
 import org.springframework.ai.tool.ToolCallback;
 
 import java.util.List;
@@ -55,5 +55,6 @@ public interface MCPService {
      * @param id 服务器ID
      * @return 连接状态信息
      */
-    String testConnection(Integer id);
+    boolean testConnectionById(Integer id);
+    boolean testConnection(SQLMcpServer server);
 }

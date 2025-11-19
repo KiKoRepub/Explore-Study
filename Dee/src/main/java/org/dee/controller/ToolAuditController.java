@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.dee.entity.ToolAuditLog;
 import org.dee.enums.ErrorCodeEnum;
 import org.dee.service.ToolAuditService;
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.ResultBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;

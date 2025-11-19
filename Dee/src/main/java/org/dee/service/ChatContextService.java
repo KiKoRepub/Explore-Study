@@ -1,6 +1,6 @@
 package org.dee.service;
 
-import org.dee.dto.ChatMessageDTO;
+import org.dee.entity.dto.ChatMessageDTO;
 import org.dee.entity.ChatRecord;
 import org.dee.entity.ChatRecordZip;
 

@@ -2,19 +2,14 @@ package org.dee.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.dee.entity.ChatRecord;
-import org.dee.entity.ChatRecordZip;
 import org.dee.enums.PersistenceType;
 import org.dee.service.*;
-import org.dee.service.impl.ToolServiceImpl;
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.ResultBean;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j

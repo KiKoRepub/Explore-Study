@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import org.dee.entity.SQLTool;
 import org.dee.enums.ErrorCodeEnum;
 import org.dee.service.ToolService;
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.ResultBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

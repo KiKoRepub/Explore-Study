@@ -1,6 +1,6 @@
 package org.dee.service.impl;
 
-import org.dee.vo.ImageGenerateResult;
+import org.dee.entity.vo.ImageGenerateResult;
 import org.dee.service.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

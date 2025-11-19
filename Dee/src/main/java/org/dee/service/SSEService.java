@@ -1,9 +1,8 @@
 package org.dee.service;
 
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.ResultBean;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * SSE 流式对话服务接口

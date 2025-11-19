@@ -3,12 +3,12 @@ package org.dee.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.dee.dto.McpServerDto;
+import org.dee.entity.dto.McpServerDto;
 import org.dee.entity.SQLMcpServer;
 import org.dee.enums.ErrorCodeEnum;
 import org.dee.service.MCPService;
-import org.dee.vo.McpServerVo;
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.McpServerVo;
+import org.dee.entity.vo.ResultBean;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +18,13 @@ import java.util.List;
 
 /**
  * MCP服务器管理控制器
+ * TODO 完善MCP的管理功能 (Nacos MCP ROUTER )
  */
 @Slf4j
 @RestController
 @RequestMapping("/mcp")
-@Api(tags = "MCP服务器管理")
-public class MCPController {
+@Api(tags = "MCP数据库管理")
+public class MCPSQLController {
 
     @Autowired
     private MCPService mcpService;
@@ -64,7 +65,7 @@ public class MCPController {
     /**
      * 添加MCP服务器
      */
-    @PostMapping("/server")
+    @PostMapping("/add-server")
     @ApiOperation(value = "添加MCP服务器", notes = "添加新的MCP服务器配置")
     public ResultBean addMCPServer(@Valid @RequestBody McpServerDto mcpServerDto) {
         try {
@@ -85,7 +86,7 @@ public class MCPController {
     /**
      * 更新MCP服务器
      */
-    @PutMapping("/server")
+    @PutMapping("/update-server")
     @ApiOperation(value = "更新MCP服务器", notes = "更新已存在的MCP服务器配置")
     public ResultBean updateMCPServer(@Valid @RequestBody McpServerDto mcpServerDto) {
         try {
@@ -151,8 +152,10 @@ public class MCPController {
     @ApiOperation(value = "测试MCP服务器连接", notes = "测试指定MCP服务器的连接状态")
     public ResultBean testConnection(@PathVariable Integer id) {
         try {
-            String result = mcpService.testConnection(id);
-            return ResultBean.success(result);
+            boolean result = mcpService.testConnectionById(id);
+
+            return result ? ResultBean.success("连接成功")
+                          : ResultBean.error(ErrorCodeEnum.SERVICE_ERROR,"连接失败");
         } catch (Exception e) {
             log.error("测试MCP服务器连接失败", e);
             return ResultBean.error(ErrorCodeEnum.SERVICE_ERROR,"测试连接失败: " + e.getMessage());

@@ -1,4 +1,4 @@
-package org.dee.vo;
+package org.dee.entity.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

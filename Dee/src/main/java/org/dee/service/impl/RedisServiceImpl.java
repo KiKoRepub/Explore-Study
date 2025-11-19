@@ -3,7 +3,7 @@ package org.dee.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.dee.dto.RedisChatMessageDTO;
+import org.dee.entity.dto.RedisChatMessageDTO;
 import org.dee.entity.ChatRecord;
 import org.dee.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;

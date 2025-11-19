@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.dee.callBack.MyMcpToolCallBackProvider;
 import org.dee.enums.ErrorCodeEnum;
-import org.dee.vo.ResultBean;
+import org.dee.entity.vo.ResultBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/mcp/tools")
-@Api(tags = "MCP工具管理")
+@Api(tags = "MCP管理")
 public class MCPToolController {
 
     @Autowired(required = false)

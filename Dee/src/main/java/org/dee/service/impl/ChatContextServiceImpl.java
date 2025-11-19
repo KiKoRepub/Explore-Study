@@ -2,7 +2,7 @@ package org.dee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.dee.dto.ChatMessageDTO;
+import org.dee.entity.dto.ChatMessageDTO;
 import org.dee.entity.ChatRecord;
 import org.dee.entity.ChatRecordZip;
 import org.dee.mapper.ChatRecordMapper;
@@ -178,12 +178,12 @@ public class ChatContextServiceImpl implements ChatContextService {
 
         // 2. 优先从缓存加载历史对话记录
         String conversationKey = ChatUtils.buildConversationKey(conversationId,userId);
-        List<ChatMessageDTO> cachedMessages = cacheChatService.getCachedChatMessages(conversationKey, org.dee.dto.ChatMessageDTO.class);
+        List<ChatMessageDTO> cachedMessages = cacheChatService.getCachedChatMessages(conversationKey, ChatMessageDTO.class);
 
         if (cachedMessages != null && !cachedMessages.isEmpty()) {
             // 从缓存加载
             contextBuilder.append("[最近对话]\n");
-            for (org.dee.dto.ChatMessageDTO msg : cachedMessages) {
+            for (ChatMessageDTO msg : cachedMessages) {
                 contextBuilder.append("用户: ").append(msg.getUserMessage()).append("\n");
                 contextBuilder.append("助手: ").append(msg.getBotResponse()).append("\n");
             }

@@ -1,4 +1,4 @@
-package org.dee.dto;
+package org.dee.entity.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

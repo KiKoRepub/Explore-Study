@@ -1,13 +1,15 @@
 package org.dee.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.modelcontextprotocol.client.McpAsyncClient;
 import lombok.extern.slf4j.Slf4j;
 import org.dee.callBack.MyMcpToolCallBackProvider;
 import org.dee.entity.SQLMcpServer;
+import org.dee.enums.McpConnectionEnum;
+import org.dee.enums.McpServerTypeEnum;
 import org.dee.mapper.MCPServerMapper;
 import org.dee.service.MCPService;
-import org.dee.vo.McpServerVo;
+import org.dee.entity.vo.McpServerVo;
+import org.dee.service.ToolService;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +28,10 @@ public class MCPServiceImpl implements MCPService {
 
     @Autowired
     private MCPServerMapper mcpServerMapper;
+
+    @Autowired
+    private ToolService toolService;
+
     
     @Autowired(required = false)
     private List<McpAsyncClient> mcpAsyncClients;
@@ -41,7 +47,7 @@ public class MCPServiceImpl implements MCPService {
             BeanUtils.copyProperties(server, vo);
             
             // 设置运行时状态
-            vo.setConnectionStatus(getConnectionStatus(server));
+            vo.setConnectionStatus(getConnectionStatus(server).description);
             vo.setToolCount(getToolCount(server.getServerName()));
             
             return vo;
@@ -68,7 +74,7 @@ public class MCPServiceImpl implements MCPService {
         
         McpServerVo vo = new McpServerVo();
         BeanUtils.copyProperties(server, vo);
-        vo.setConnectionStatus(getConnectionStatus(server));
+        vo.setConnectionStatus(getConnectionStatus(server).description);
         vo.setToolCount(getToolCount(server.getServerName()));
         
         return vo;
@@ -82,12 +88,23 @@ public class MCPServiceImpl implements MCPService {
             mcpServer.setEnabled(true);
         }
 
+        if (testConnection(mcpServer)) {
+            log.info("添加MCP服务器成功，连接测试通过");
 
-        return mcpServerMapper.insert(mcpServer) > 0;
+
+
+            return mcpServerMapper.insert(mcpServer) > 0;
+        }else {
+            log.error("添加MCP服务器失败，连接测试未通过");
+            return false;
+        }
     }
 
     @Override
     public boolean updateMcpServer(SQLMcpServer mcpServer) {
+        McpServerTypeEnum type = mcpServer.getType();
+        testConnection(mcpServer);
+
         mcpServer.setUpdateTime(LocalDateTime.now());
         return mcpServerMapper.updateById(mcpServer) > 0;
     }
@@ -105,14 +122,18 @@ public class MCPServiceImpl implements MCPService {
         server.setUpdateTime(LocalDateTime.now());
         return mcpServerMapper.updateById(server) > 0;
     }
+    @Override
+    public boolean testConnectionById(Integer id) {
+        SQLMcpServer server = mcpServerMapper.selectById(id);
+        return testConnection(server);
+    }
 
     @Override
-    public String testConnection(Integer id) {
-        SQLMcpServer server = mcpServerMapper.selectById(id);
+    public boolean testConnection(SQLMcpServer server) {
         if (server == null) {
-            return "服务器不存在";
+            return false;
         }
-        
+
         try {
             // TODO: 实现实际的连接测试逻辑
             // 根据不同的服务器类型进行连接测试
@@ -123,30 +144,34 @@ public class MCPServiceImpl implements MCPService {
                     return testHttpConnection(server);
                 case STDIO:
                     return testStdioConnection(server);
-                default:
-                    return "未知的服务器类型";
+                default: {
+                    log.error("未知的MCP服务器类型: {}", server.getType());
+                    return false;
+                }
             }
         } catch (Exception e) {
             log.error("测试MCP服务器连接失败: {}", e.getMessage(), e);
-            return "连接失败: " + e.getMessage();
+            return false;
         }
     }
-    
     /**
      * 获取服务器连接状态
      */
-    private String getConnectionStatus(SQLMcpServer server) {
+    private McpConnectionEnum getConnectionStatus(SQLMcpServer server) {
         if (!server.getEnabled()) {
-            return "已禁用";
+            return McpConnectionEnum.FORBID;
         }
         
         // TODO: 实现实际的状态检查逻辑
         // 可以通过检查 mcpAsyncClients 中是否有对应的客户端来判断
         if (mcpAsyncClients != null && !mcpAsyncClients.isEmpty()) {
-            return "已连接";
+                if (testConnection(server)){
+                    return McpConnectionEnum.CONNECTED;
+                };
+            return McpConnectionEnum.FAULT;
         }
         
-        return "未连接";
+        return McpConnectionEnum.DISCONNECTED;
     }
     
     /**
@@ -166,24 +191,29 @@ public class MCPServiceImpl implements MCPService {
     /**
      * 测试SSE连接
      */
-    private String testSseConnection(SQLMcpServer server) {
+    private boolean testSseConnection(SQLMcpServer server) {
         // TODO: 实现SSE连接测试
-        return "SSE连接测试功能待实现";
+        String serverUrl = server.getServerUrl();
+
+
+        return true;
     }
     
     /**
      * 测试HTTP连接
      */
-    private String testHttpConnection(SQLMcpServer server) {
+    private boolean testHttpConnection(SQLMcpServer server) {
         // TODO: 实现HTTP连接测试
-        return "HTTP连接测试功能待实现";
+
+        return true;
     }
     
     /**
      * 测试STDIO连接
      */
-    private String testStdioConnection(SQLMcpServer server) {
+    private boolean testStdioConnection(SQLMcpServer server) {
         // TODO: 实现STDIO连接测试
-        return "STDIO连接测试功能待实现";
+
+        return true;
     }
 }

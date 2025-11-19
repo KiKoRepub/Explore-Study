@@ -1,7 +1,7 @@
 package org.dee.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dee.dto.ChatMessageDTO;
+import org.dee.entity.dto.ChatMessageDTO;
 import org.dee.enums.PersistenceType;
 import org.dee.service.ChatContextService;
 import org.dee.service.CacheChatService;

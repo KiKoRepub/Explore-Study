@@ -1,12 +1,11 @@
 package org.dee.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dee.dto.ChatMessageDTO;
-import org.dee.dto.RedisChatMessageDTO;
+import org.dee.entity.dto.ChatMessageDTO;
+import org.dee.entity.dto.RedisChatMessageDTO;
 import org.dee.enums.PersistenceType;
 import org.dee.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
