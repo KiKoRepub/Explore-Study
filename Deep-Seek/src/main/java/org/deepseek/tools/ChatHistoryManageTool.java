@@ -8,6 +8,7 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class ChatHistoryManageTool {
     }
 
     @Tool(description = "读取之前保存到数据库中的聊天记录")
-//    @PreAuthorize("hasRole('ADMIN')") // 只有管理员角色才能调用此方法
+    @PreAuthorize("hasRole('ADMIN')") // 只有管理员角色才能调用此方法
     public String readMySQLRecord(@ToolParam(description = "之前的对话id",required = true) String conversationId){
         List<ChatMessage> cacheList =
                 cpService.readRecords(conversationId);

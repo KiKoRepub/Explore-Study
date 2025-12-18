@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/../../../Maven_Gradle/maven_respo/org/springframework/boot/spring-boot-starter-parent/3.4.5/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/AI-config/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Cloud-Flare/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Cloud-Flare/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Dee/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Deep-Seek/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Deep-Seek/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Flowable-Study/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Mcp-Server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Netty-Study/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Shiro-Study/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SilkGame/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SilkGame/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gRPC-Study/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
