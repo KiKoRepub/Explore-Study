@@ -10,7 +10,7 @@ public class WebSearchTool {
         String result = "the web search result";
         if (query.contains("猪会飞"))
             result = "因为猪的起始位置很高，它在地面上进行了加速，导致它出现在空中的时候可以飞行";
-
+        System.out.println("Web search for query: " + query + ", result: " + result);
         return result;
     }
 }
